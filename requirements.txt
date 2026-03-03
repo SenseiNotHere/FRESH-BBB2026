@@ -1,8 +1,8 @@
-robotpy==2026.2.1
+robotpy==2026.2.1.1
 robotpy-cli==2026.0.1
-certifi
-robotpy-rev==2026.0.2
-wpilib==2026.2.1
+certifi==2026.2.25
+robotpy-rev==2026.0.3.1
+wpilib==2026.2.1.1
 phoenix6==26.1.1
 robotpy-pathplannerlib==2026.1.2
-robotpy-commands-v2==2026.2.1
+robotpy-commands-v2==2026.2.1.1

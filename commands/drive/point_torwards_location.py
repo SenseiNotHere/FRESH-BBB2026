@@ -98,10 +98,7 @@ class PointTowardsLocation(commands2.Command):
 
 
     def end(self, interrupted: bool):
-        if self.active:
-            self.drivetrain.stopOverrideToFaceThisPoint(self.activeTargetLocation)
-        SmartDashboard.putString("command/c" + self.__class__.__name__, "interrupted")
-
+        self.drivetrain.stop()
 
     def isFinished(self) -> bool:
         return False  # never finish, wait for user to stop this command

@@ -11,12 +11,10 @@ components = [
     # "all",
     # "apriltag",
      "commands2",
-    # "pathplannerlib",
-    # "phoenix6"
     # "cscore",
     # "romi",
     # "sim",
     # "xrp",
 ]
 # Other pip packages to install
-requires = ["phoenix6==26.1.0","robotpy-navx==2026.0.0", "robotpy-pathplannerlib", "robotpy-rev==2026.0.1"]
+requires = ["phoenix6==26.1.1","robotpy-navx==2026.0.0", "robotpy-pathplannerlib", "robotpy-rev==2026.0.3.1"]

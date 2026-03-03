@@ -1,4 +1,4 @@
-# FRESH 2026 - Bobby the Bilingual Box
+# FRESH 2026 – Bobby the Broken Box
 
 FRC Team 1811’s 2026 competition robot codebase.
 
@@ -77,21 +77,17 @@ APPROACHING_TOWER
 
 ------------------------------------------------------------------------
 
-## 2️⃣ Route It in `update()`
+## 2️⃣ Route It in `__init__()`
 
 Open:
 
     superstructure/superstructure.py
 
-Inside the `update()` method, add your state to the routing logic:
+Inside the `__init__()` method, add your state to the `_state_handlers` dictinary:
 
 ``` python
-elif self.robot_state == RobotState.ALIGNING_TO_TARGET:
-    self._handle_aligning_to_target()
+RobotState.ALIGNING_TO_TARGET: self._handle_aligning_to_target,
 ```
-
-If it logically belongs with other grouped states (like elevator
-states), add it to that list instead.
 
 ------------------------------------------------------------------------
 

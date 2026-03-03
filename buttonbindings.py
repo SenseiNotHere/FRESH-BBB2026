@@ -2,7 +2,8 @@ from wpilib import XboxController, SmartDashboard
 from wpimath.geometry import Pose2d, Rotation2d
 from commands2 import InstantCommand
 
-from commands.auto.follow_shoot_hub import FollowShootBlueHub, FollowShootRedHub
+from commands.auto.follow_shoot_hub import FollowShootHub
+from commands.auto.pose_lock_dock import PoseLockDock
 from commands.climber.climber_commands import ToggleClimbAuto
 from commands.intake.intake_commands import RunIntake, ReverseIntake, DeployRetractIntake
 from superstructure.robot_state import RobotState
@@ -11,6 +12,8 @@ from constants.field_constants import AprilTags
 
 from commands.drive.reset_xy import ResetXY, ResetSwerveFront
 from commands.auto.drive_torwards_object import SwerveTowardsObject
+
+from utils.fieldutils import getClosestClimbPose
 
 
 class ButtonBindings:
@@ -63,32 +66,23 @@ class ButtonBindings:
             )
         )
 
-#        # Right Trigger = Follow hub and shoot
-#        self.driverController.axisGreaterThan(
-#            XboxController.Axis.kRightTrigger,
-#            threshold=0.05
-#        ).whileTrue(
-#            FollowShootBlueHub(self.robotContainer.superstructure, self.robotDrive) # FIX THIS!!!
-#        )
+        # Right Trigger = Follow hub and shoot
+        self.driverController.axisGreaterThan(
+            XboxController.Axis.kRightTrigger,
+            threshold=0.05
+        ).whileTrue(
+            FollowShootHub(self.robotContainer.superstructure, self.robotDrive)
+        )
 
-        # Left Trigger = Auto Swerve Toward Gamepiece
-#        driveToGamepiece = SwerveTowardsObject(
-#            drivetrain=self.robotDrive,
-#            speed=lambda: -self.driverController.getRawAxis(
-#                XboxController.Axis.kLeftTrigger
-#            ),
-#            camera=self.limelight,
-#            cameraLocationOnRobot=Pose2d(
-#                -0.4,
-#                0,
-#                Rotation2d.fromDegrees(180)
-#            ),
-#        )
+        # Left Trigger = Tower dock
+        targetPos = getClosestClimbPose(self.robotDrive)
 
-#        self.driverController.axisGreaterThan(
-#            XboxController.Axis.kLeftTrigger,
-#            threshold=0.05
-#        ).whileTrue(driveToGamepiece)
+        self.driverController.axisGreaterThan(
+            XboxController.Axis.kLeftTrigger,
+            threshold=0.05
+        ).whileTrue(
+            PoseLockDock(self.robotDrive, targetPos)
+        )
 
     # Operator Controls
 

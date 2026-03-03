@@ -99,6 +99,7 @@ class Tower:
 
     BLUE_TOWER_CLIMB_BOTTOM = Pose2d(1.066, 2.720, Rotation2d.fromDegrees(90))
     RED_TOWER_CLIMB_BOTTOM = Pose2d(15.460, 3.273, Rotation2d.fromDegrees(90))
+
 class AprilTags:
     APRIL_TAG_POSITIONS = {
         1: Translation2d(3.6074798, 3.3902756),

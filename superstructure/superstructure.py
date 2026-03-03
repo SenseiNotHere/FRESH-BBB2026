@@ -33,41 +33,67 @@ class Superstructure:
         vision: LimelightCamera | None = None,
         orchestra: OrchestraSubsystem | None = None,
         driverController: CommandGenericHID | None = None,
-        operatorController: CommandGenericHID | None = None
+        operatorController: CommandGenericHID | None = None,
     ):
+        # Subsystems
         self.drivetrain = drivetrain
         self.shooter = shooter
         self.indexer = indexer
         self.agitator = agitator
-        self.shotCalculator = shotCalculator
         self.intake = intake
         self.climber = climber
         self.vision = vision
         self.orchestra = orchestra
+        self.shotCalculator = shotCalculator
         self.driverController = driverController
         self.operatorController = operatorController
 
-        # Subsystems
-        self.hasShooter = shooter is not None
-        self.hasIndexer = indexer is not None
-        self.hasAgitator = agitator is not None
-        self.hasShotCalc = shotCalculator is not None
-        self.hasIntake = intake is not None
-        self.hasClimber = climber is not None
-        self.hasVision = vision is not None
-        self.hasOrchestra = orchestra is not None
+        # Subsystem availability flags
+        self.hasShooter = self.shooter is not None
+        self.hasIndexer = self.indexer is not None
+        self.hasAgitator = self.agitator is not None
+        self.hasShotCalc = self.shotCalculator is not None
+        self.hasIntake = self.intake is not None
+        self.hasClimber = self.climber is not None
+        self.hasVision = self.vision is not None
+        self.hasOrchestra = self.orchestra is not None
+        self.hasDriverController = self.driverController is not None
+        self.hasOperatorController = self.operatorController is not None
 
+        # State tracking
         self.robot_state = RobotState.IDLE
         self.robot_readiness = RobotReadiness()
 
-        # Shooter readiness debounce
-        self._shooter_ready_since = None
+        # Internal Timing / Debounce
 
-        # Elevator readiness
+        # Shooter spin-up debounce timer
+        self._shooter_ready_since: float | None = None
+
+        # Elevator "just reached target" detection
         self._prev_elevator_at_target = False
 
-        # Rumble controller
-        self._rumble_end_time = None
+        # Controller rumble timer (auto stop)
+        self._rumble_end_time: float | None = None
+
+        self._state_handlers = {
+            RobotState.IDLE: self._handle_idle,
+            RobotState.INTAKING: self._handle_intaking,
+            RobotState.INTAKING_AUTONOMOUS: self._handle_intaking,
+            RobotState.PREP_SHOT: self._handle_prep_shot,
+            RobotState.PREP_SHOT_AUTONOMOUS: self._handle_prep_shot,
+            RobotState.SHOOTING: self._handle_shooting,
+            RobotState.SHOOTING_AUTONOMOUS: self._handle_shooting,
+            RobotState.ELEVATOR_RISING: self._handle_elevator_states,
+            RobotState.ELEVATOR_LOWERING: self._handle_elevator_states,
+            RobotState.AIRBREAK_ENGAGED_UP: self._handle_elevator_states,
+            RobotState.AIRBREAK_ENGAGED_DOWN: self._handle_elevator_states,
+            RobotState.ELEVATOR_MINIMUM: self._handle_elevator_states,
+            RobotState.CLIMB_MANUAL: self._handle_climb_manual,
+            RobotState.INTAKE_DEPLOYED: self._handle_intake_position,
+            RobotState.INTAKE_RETRACTED: self._handle_intake_position,
+            RobotState.PLAYING_SONG: self._handle_playing_song,
+            RobotState.PLAYING_CHAMPIONSHIP_SONG: self._handle_playing_championship_song,
+        }
 
     # Update Loop
 
@@ -77,93 +103,31 @@ class Superstructure:
         Should be called periodically to update subsystem states.
         """
 
-        SmartDashboard.putString(
-            "Superstructure/State",
-            self.robot_state.name
-        )
+        SmartDashboard.putString("Superstructure/State", self.robot_state.name)
 
         self._update_readiness()
 
-        if self.robot_state == RobotState.IDLE:
-            self._handle_idle()
+        handler = self._state_handlers.get(self.robot_state)
+        if handler:
+            handler()
 
-        elif self.robot_state in [
-            RobotState.INTAKING,
-            RobotState.INTAKING_AUTONOMOUS
-        ]:
-            self._handle_intaking()
-
-        elif self.robot_state in [
-            RobotState.PREP_SHOT,
-            RobotState.PREP_SHOT_AUTONOMOUS
-        ]:
-            self._handle_prep_shot()
-
-        elif self.robot_state in [
-            RobotState.SHOOTING,
-            RobotState.SHOOTING_AUTONOMOUS
-        ]:
-            self._handle_shooting()
-
-        elif self.robot_state in [
-            RobotState.ELEVATOR_RISING,
-            RobotState.ELEVATOR_LOWERING,
-            RobotState.AIRBREAK_ENGAGED_UP,
-            RobotState.AIRBREAK_ENGAGED_DOWN,
-            RobotState.ELEVATOR_MINIMUM
-        ]:
-            self._handle_elevator_states()
-
-        elif self.robot_state == RobotState.CLIMB_MANUAL:
-            self._handle_climb_manual()
-
-        elif self.robot_state in [
-            RobotState.INTAKE_DEPLOYED,
-            RobotState.INTAKE_RETRACTED
-        ]:
-            self._handle_intake_position()
-
-        elif self.robot_state == RobotState.PLAYING_SONG:
-            self._handle_playing_song()
-
-        elif self.robot_state == RobotState.PLAYING_CHAMPIONSHIP_SONG:
-            self._handle_playing_championship_song()
-
-
-        # Ensure we stop music if we leave the song state
-        if self.robot_state != RobotState.PLAYING_SONG:
-            self.orchestra.stop()
-
-        if getattr(self, "_rumble_end_time", None):
-            if Timer.getFPGATimestamp() >= self._rumble_end_time:
-                self._rumble_controller(
-                    self.driverController,
-                    XboxController.RumbleType.kBothRumble,
-                    0.0
-                )
-                self._rumble_end_time = None
+        self._handle_music_cleanup()
+        self._handle_rumble_timeout()
 
     # Readiness
 
     def _update_readiness(self):
 
         # Shooter readiness
-        if self.hasShooter:
-            self.robot_readiness.shooterReady = self.shooter.atSpeed(tolerance_rpm=100)
-        else:
-            self.robot_readiness.shooterReady = False
+        self.robot_readiness.shooterReady = self.shooter.atSpeed(tolerance_rpm=100)
 
         # Intake readiness
-        if self.hasIntake:
-            self.robot_readiness.intakeDeployed = self.intake.isDeployed()
-        else:
-            self.robot_readiness.intakeDeployed = False
+        self.robot_readiness.intakeDeployed = self.intake.isDeployed()
 
         # Climber readiness
-        if self.hasClimber:
-            self.robot_readiness.elevatorAtHighTarget = self.climber.atHighTarget()
-            self.robot_readiness.elevatorAtLowTarget = self.climber.atLowTarget()
-            self.robot_readiness.elevatorAtClimbTarget = self.climber.atClimbTarget()
+        self.robot_readiness.elevatorAtHighTarget = self.climber.atHighTarget()
+        self.robot_readiness.elevatorAtLowTarget = self.climber.atLowTarget()
+        self.robot_readiness.elevatorAtClimbTarget = self.climber.atClimbTarget()
 
         # Feeding rule
         self.robot_readiness.canFeed = (
@@ -191,6 +155,11 @@ class Superstructure:
     # Public State API
 
     def createStateCommand(self, state: RobotState):
+        """
+        Creates a FunctionalCommand that sets the robot state to the specified state.
+
+        To be used outside superstructure.py.
+        """
         return FunctionalCommand(
             onInit=lambda: self.setState(state),
             onExecute=lambda: None,
@@ -199,28 +168,25 @@ class Superstructure:
         )
 
     def setState(self, newState: RobotState):
+        """
+        Sets the robot state to the specified state.
 
+        To be used inside superstructure.py.
+        """
         if newState == self.robot_state:
             return
 
         oldState = self.robot_state
         self.robot_state = newState
 
-        # Reset shooter-ready debounce when entering/exiting PREP
-        if newState in [
-            RobotState.PREP_SHOT,
-            RobotState.PREP_SHOT_AUTONOMOUS
-        ]:
-            self._shooter_ready_since = None
-        else:
-            self._shooter_ready_since = None
+        # Reset shooter-ready
+        self._shooter_ready_since = None
 
         # Rumble controller - States
         if newState in [
             RobotState.PREP_SHOT,
             RobotState.SHOOTING,
             RobotState.INTAKING,
-            RobotState.ELEVATOR_RISING
         ]:
             self._rumble_controller(
                 self.driverController,
@@ -229,42 +195,41 @@ class Superstructure:
             )
             self._rumble_end_time = Timer.getFPGATimestamp() + 0.15
 
-        if newState == RobotState.ELEVATOR_RISING:
-            self._rumble_controller(
-                self.driverController,
-                XboxController.RumbleType.kBothRumble,
-                0.5
-            )
-            self._rumble_end_time = Timer.getFPGATimestamp() + 0.2
+#        if newState == RobotState.ELEVATOR_RISING:
+#            self._rumble_controller(
+#                self.operatorController,
+#                XboxController.RumbleType.kBothRumble,
+#                0.3
+#            )
+#            self._rumble_end_time = Timer.getFPGATimestamp() + 0.2
 
-        if newState == RobotState.ELEVATOR_LOWERING:
-            self._rumble_controller(
-                self.driverController,
-                XboxController.RumbleType.kBothRumble,
-                1.0
-            )
-            self._rumble_end_time = Timer.getFPGATimestamp() + 0.3
+#        if newState == RobotState.ELEVATOR_LOWERING:
+#            self._rumble_controller(
+#                self.operatorController,
+#                XboxController.RumbleType.kBothRumble,
+#                0.5
+#            )
+#            self._rumble_end_time = Timer.getFPGATimestamp() + 0.3
 
-        if newState == RobotState.ELEVATOR_MINIMUM:
-            self._rumble_controller(
-                self.driverController,
-                XboxController.RumbleType.kBothRumble,
-                0.2
-            )
-            self._rumble_end_time = Timer.getFPGATimestamp() + 0.2
+#        if newState == RobotState.ELEVATOR_MINIMUM:
+#            self._rumble_controller(
+#                self.operatorController,
+#                XboxController.RumbleType.kBothRumble,
+#                0.2
+#            )
+#            self._rumble_end_time = Timer.getFPGATimestamp() + 0.2
 
         print(f"[Superstructure] {oldState.name} -> {newState.name}")
 
-        SmartDashboard.putString(
-            "Superstructure/State",
-            newState.name
-        )
+        SmartDashboard.putString("Superstructure/State", newState.name)
 
     # State Handlers
 
     # Handles idle state by ensuring all subsystems are stopped.
     def _handle_idle(self):
-
+        """
+        Handles the idle state by stopping all subsystems.
+        """
         self._stop_shooter()
         self._stop_indexer()
         self._stop_intake()
@@ -273,18 +238,18 @@ class Superstructure:
         
     # Start intaking on entry
     def _handle_intaking(self):
-
-        self._stop_shooter()
+        """
+        Handles the intaking state by starting the intake.
+        """
 
         if self.hasIntake:
             self.intake.startIntaking()
 
     # Start prep shot on entry
     def _handle_prep_shot(self):
-
-        if not self.hasShooter:
-            return
-
+        """
+        Handles the prep shot state by spinning up the shooter and waiting for it to be ready.
+        """
         # Spin up shooter
         if self.hasShotCalc:
             target_rps = self.shotCalculator.getTargetSpeedRPS()
@@ -294,6 +259,8 @@ class Superstructure:
 
         if self.hasIndexer:
             self.indexer.stop()
+        if self.hasAgitator:
+            self.agitator.stop()
 
         # Debounced transition to SHOOTING
         now = Timer.getFPGATimestamp()
@@ -308,10 +275,9 @@ class Superstructure:
 
     # Start shooting on entry
     def _handle_shooting(self):
-
-        if not self.hasShooter:
-            return
-
+        """
+        Handles the shooting state by spinning up the shooter and starting the indexer and agitator.
+        """
         # Keep spinning
         if self.hasShotCalc:
             target_rps = self.shotCalculator.getTargetSpeedRPS()
@@ -321,9 +287,10 @@ class Superstructure:
 
         # Feed ONLY when ready
         if self.robot_readiness.canFeed:
-            self.indexer.feed()
+            if self.hasIndexer:
+                self.indexer.feed()
             if self.hasAgitator:
-                self.agitator.feed()
+                self.agitator.startOscillate(forwardSeconds=2.0, backwardSeconds=0.5)
         else:
             if self.hasIndexer:
                 self.indexer.stop()
@@ -332,12 +299,16 @@ class Superstructure:
 
     # Start elevator movement on entry
     def _handle_elevator_states(self):
-        self._stop_shooter()
-        self._stop_indexer()
-        self._stop_intake()
+        """
+        !! STOPS ALL SUBSYSTEMS ON ENTRY !!
 
+        Handles the elevator movement states by setting the climber target position accordingly.
+        Handles the elevator airbreak states by releasing/engaging the airbrake as needed.
+        """
         if not self.hasClimber:
             return
+
+        self._stop_all_subsystems()
 
         state = self.robot_state
 
@@ -372,18 +343,26 @@ class Superstructure:
 
     # Start manual climb on entry
     def _handle_climb_manual(self):
+        """
+        !! STOPS ALL SUBSYSTEMS ON ENTRY !!
+
+        Handles the manual climb state by disabling all subsystems.
+        Manual climb control is managed by the ManualClimb command.
+        """
+        if not self.hasClimber:
+            return
 
         # Disable other mechanisms
-        self._stop_shooter()
-        self._stop_indexer()
-        self._stop_intake()
+        self._stop_all_subsystems()
 
         # DO NOT auto engage brake here.
         # ManualClimb command controls brake + movement.
 
     # Starts intake deployment/retraction on entry
     def _handle_intake_position(self):
-
+        """
+        Handles the intake position state by deploying/retracting the intake.
+        """
         if not self.hasIntake:
             return
 
@@ -398,11 +377,18 @@ class Superstructure:
 
     # Start song on entry
     def _handle_playing_song(self):
-
+        """
+        Handles the playing song state by playing the current loaded song.
+        """
         self.orchestra.play_selected_song()
 
     # Start championship song on entry
     def _handle_playing_championship_song(self):
+        """
+        !! ONLY WHEN CHAMPIONSHIP IS ENABLED !!
+
+        Handles the playing championship song state by playing the championship song.
+        """
         self.orchestra.play_championship_song()
 
     # Helper Methods
@@ -415,20 +401,31 @@ class Superstructure:
         if self.hasIndexer:
             self.indexer.stop()
 
-    def _stow_intake(self):
-        if self.hasIntake:
-            self.intake.stow()
-            
-    def _stop_intake(self):
-        if self.hasIntake:
-            self.intake.stop()
-    
-    def _stop_orchestra(self):
-        self.orchestra.stop()
-        
     def _stop_agitator(self):
         if self.hasAgitator:
             self.agitator.stop()
+
+    def _stop_intake(self):
+        if self.hasIntake:
+            self.intake.stop()
+
+    def _stow_intake(self):
+        if self.hasIntake:
+            self.intake.stow()
+
+    def _stop_orchestra(self):
+        if self.hasOrchestra:
+            self.orchestra.stop()
+
+    def _handle_music_cleanup(self):
+        if self.robot_state != RobotState.PLAYING_SONG and self.hasOrchestra:
+            self.orchestra.stop()
+
+    def _stop_all_subsystems(self):
+        self._stop_shooter()
+        self._stop_indexer()
+        self._stop_intake()
+        self._stop_agitator()
 
     @staticmethod
     def _rumble_controller(
@@ -443,3 +440,20 @@ class Superstructure:
             rumble_type,
             rumble_value
         )
+
+    def _handle_rumble_timeout(self):
+        if not self._rumble_end_time:
+            return
+
+        if Timer.getFPGATimestamp() >= self._rumble_end_time:
+            self._rumble_controller(
+                self.driverController,
+                XboxController.RumbleType.kBothRumble,
+                0.0
+            )
+            self._rumble_controller(
+                self.operatorController,
+                XboxController.RumbleType.kBothRumble,
+                0.0
+            )
+            self._rumble_end_time = None

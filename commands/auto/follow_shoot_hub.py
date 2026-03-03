@@ -3,42 +3,30 @@ from commands.drive.point_torwards_location import PointTowardsLocation
 from superstructure.robot_state import RobotState
 from superstructure.superstructure import Superstructure
 from subsystems.drive.drivesubsystem import DriveSubsystem
-
 from constants.field_constants import Hub
 
-class FollowShootBlueHub(ParallelCommandGroup):
+
+class FollowShootHub(ParallelCommandGroup):
 
     def __init__(
         self,
         superstructure: Superstructure,
         drivetrain: DriveSubsystem,
-        hubCoords: Hub | None = None
     ):
 
-        hubCoords = hubCoords or Hub.BLUE_HUB
         point_cmd = PointTowardsLocation(
             drivetrain=drivetrain,
-            location=hubCoords,
+            location=Hub.BLUE_HUB,
             locationIfRed=Hub.RED_HUB
         )
+
         state_cmd = superstructure.createStateCommand(RobotState.PREP_SHOT)
+
         super().__init__(point_cmd, state_cmd)
 
         self.superstructure = superstructure
         self.drivetrain = drivetrain
 
-    def end(self, interrupted):
+    def end(self, interrupted: bool):
         self.superstructure.setState(RobotState.IDLE)
         self.drivetrain.stop()
-
-class FollowShootRedHub(FollowShootBlueHub):
-    def __init__(
-        self,
-        superstructure: Superstructure,
-        drivetrain: DriveSubsystem
-    ):
-        super().__init__(
-            superstructure=superstructure,
-            drivetrain=drivetrain,
-            hubCoords=Hub.RED_HUB
-        )
