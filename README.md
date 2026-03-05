@@ -1,4 +1,4 @@
-# FRESH 2026 – Bobby the Broken Box
+# FRESH 2026 – Bobby the B Box
 
 FRC Team 1811’s 2026 competition robot codebase.
 
