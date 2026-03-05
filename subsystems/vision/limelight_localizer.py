@@ -33,21 +33,22 @@ class LimelightLocalizer(Subsystem):
         assert hasattr(drivetrain, "getPose"), "drivetrain must have getPose() for localizer to work"
         self.drivetrain = drivetrain
 
-        from getpass import getuser
-
-        self.username = getuser()
         self.flipIfRed = flipIfRed
 
         self.learningRateMult = SendableChooser()
+        self.learningRateMult.addOption("300%", 300.0)
         self.learningRateMult.addOption("100%", 1.0)
         self.learningRateMult.addOption("30%", 0.3)
         self.learningRateMult.setDefaultOption("10%", 0.1)
         self.learningRateMult.addOption("3%", 0.03)
         self.learningRateMult.addOption("1%", 0.01)
-        self.learningRateMult.addOption("0.1%", 0.001)
-        SmartDashboard.putData("LocaLearnRate", self.learningRateMult)
+        SmartDashboard.putData("Localizer/learningRate", self.learningRateMult)
 
-        self.enabled = None
+        self.enabled = SendableChooser()
+        self.enabled.addOption("off", False)
+        self.enabled.setDefaultOption("on", True)
+        SmartDashboard.putData("Localizer/on", self.enabled)
+
         self.allowed = True
         self.cameras: Dict[str, CameraState] = dict()  # list of Limelight cameras
 
@@ -84,17 +85,11 @@ class LimelightLocalizer(Subsystem):
         if len(self.cameras) == 0:
             return
 
-        enabled, flipped = None, False
-        if self.enabled is None:
-            self.initEnabledChooser()
-        if self.enabled is not None:
-            enabled, flipped = self.enabled.getSelected()
-        if not self.allowed:
-            enabled = False
-
+        enabled = self.enabled.getSelected() and self.allowed
         if not enabled:
             return
 
+        flipped = self.flipIfRed and DriverStation.getAlliance() == DriverStation.Alliance.kRed
         learningRate: float = LEARNING_RATE * self.learningRateMult.getSelected()
         odometryPos: Pose2d = self.drivetrain.getPose()
         heading: Rotation2d = self.drivetrain.getHeading()
@@ -138,23 +133,3 @@ class LimelightLocalizer(Subsystem):
                         gain = math.sqrt(gain)
                     shift = Translation2d(x - odometryPos.x, y - odometryPos.y) * min(learningRate * gain, 0.5)
                     self.drivetrain.adjustOdometry(shift, Rotation2d.fromDegrees(0))
-
-
-    def initEnabledChooser(self):
-        flipped = None
-        if self.username == "lvuser" and self.flipIfRed is not None:
-            # if we are running on RoboRIO, wait until driver station gives us alliance color
-            color = DriverStation.getAlliance()
-            if color is None:
-                return  # we cannot yet decide on whether the field should be flipped
-            flipped = (color == DriverStation.Alliance.kRed) and self.flipIfRed
-            print("Localizer: color={}, flipped={}".format(color, flipped))
-        print("Localizer will assume flipped={} (username={}, flipIfRed={})".format(flipped, self.username, self.flipIfRed))
-
-        self.enabled = SendableChooser()
-        self.enabled.addOption("off", (None, False))
-        if flipped in (None, False):
-            self.enabled.setDefaultOption("on", (True, False))
-        if flipped in (None, True):
-            self.enabled.setDefaultOption("on-flipped", (True, True))
-        SmartDashboard.putData("Localizer", self.enabled)
