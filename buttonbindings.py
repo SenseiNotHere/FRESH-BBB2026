@@ -57,9 +57,9 @@ class ButtonBindings:
         )
 
         # Shooter
-        # A = Shoot
+        # Right Bumper = Shoot
         self.driverController.button(
-            XboxController.Button.kA
+            XboxController.Button.kRightBumper
         ).whileTrue(
             self.superstructure.createStateCommand(
                 RobotState.PREP_SHOT
@@ -67,21 +67,28 @@ class ButtonBindings:
         )
 
         # Right Trigger = Follow hub and shoot
-        self.driverController.axisGreaterThan(
-            XboxController.Axis.kRightTrigger,
-            threshold=0.05
-        ).whileTrue(
-            FollowShootHub(self.robotContainer.superstructure, self.robotDrive)
-        )
+#        self.driverController.axisGreaterThan(
+#            XboxController.Axis.kRightTrigger,
+#            threshold=0.05
+#        ).whileTrue(
+#            FollowShootHub(self.robotContainer.superstructure, self.robotDrive)
+#        )
 
         # Left Trigger = Tower dock
         targetPos = getClosestClimbPose(self.robotDrive)
 
-        self.driverController.axisGreaterThan(
-            XboxController.Axis.kLeftTrigger,
-            threshold=0.05
+#        self.driverController.axisGreaterThan(
+#            XboxController.Axis.kLeftTrigger,
+#            threshold=0.05
+#        ).whileTrue(
+#            PoseLockDock(self.robotDrive, targetPos)
+#        )
+
+        # X-Button = MUSICCC
+        self.driverController.button(
+            XboxController.Button.kX
         ).whileTrue(
-            PoseLockDock(self.robotDrive, targetPos)
+            self.superstructure.createStateCommand(RobotState.PLAYING_SONG)
         )
 
     # Operator Controls

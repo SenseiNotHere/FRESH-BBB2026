@@ -95,6 +95,10 @@ class Superstructure:
             RobotState.PLAYING_CHAMPIONSHIP_SONG: self._handle_playing_championship_song,
         }
 
+        # Request flags
+        self._request_intake = False
+        self._request_shooter = False
+
     # Update Loop
 
     def update(self):
@@ -106,6 +110,25 @@ class Superstructure:
         SmartDashboard.putString("Superstructure/State", self.robot_state.name)
 
         self._update_readiness()
+
+        # Intake request
+        if self._request_intake and self.hasIntake:
+            self.intake.startIntaking()
+
+        # Shooter request
+        if self._request_shooter and self.hasShooter:
+
+            if self.hasShotCalc:
+                target_rps = self.shotCalculator.getTargetSpeedRPS()
+                self.shooter.setTargetRPS(target_rps)
+            else:
+                self.shooter.useDashboardPercent()
+
+            if self.robot_readiness.canFeed:
+                if self.hasIndexer:
+                    self.indexer.feed()
+                if self.hasAgitator:
+                    self.agitator.feed()
 
         handler = self._state_handlers.get(self.robot_state)
         if handler:
@@ -154,17 +177,69 @@ class Superstructure:
 
     # Public State API
 
-    def createStateCommand(self, state: RobotState):
+    def createStateCommand(self, state: RobotState, finishImmediately=False):
         """
         Creates a FunctionalCommand that sets the robot state to the specified state.
+        Handles intake and shooter stop/start based on the state.
 
         To be used outside superstructure.py.
         """
+
+        def on_init():
+            self.setState(state)
+
+            if state in [
+                RobotState.INTAKING,
+                RobotState.INTAKING_AUTONOMOUS
+            ]:
+                self._request_intake = True
+
+            if state in [
+                RobotState.PREP_SHOT,
+                RobotState.PREP_SHOT_AUTONOMOUS,
+                RobotState.SHOOTING,
+                RobotState.SHOOTING_AUTONOMOUS,
+            ]:
+                self._request_shooter = True
+
+        def on_end(interrupted: bool):
+
+            if state in [
+                RobotState.INTAKING,
+                RobotState.INTAKING_AUTONOMOUS
+            ]:
+                self.setState(RobotState.IDLE)
+                self._request_intake = False
+
+            elif state in [
+                RobotState.PREP_SHOT,
+                RobotState.PREP_SHOT_AUTONOMOUS,
+                RobotState.SHOOTING,
+                RobotState.SHOOTING_AUTONOMOUS
+            ]:
+                self.setState(RobotState.IDLE)
+                self._request_shooter = False
+            else:
+                self.setState(RobotState.IDLE)
+
         return FunctionalCommand(
-            onInit=lambda: self.setState(state),
+            onInit=on_init,
             onExecute=lambda: None,
-            onEnd=lambda interrupted: self.setState(RobotState.IDLE),
-            isFinished=lambda: False
+            onEnd=on_end,
+            isFinished=lambda: finishImmediately
+        )
+
+    def autoCreateStateCommand(self, state: RobotState):
+
+        def init():
+            print(f"AUTO COMMAND TRIGGERED -> {state}")
+            self.setState(state)
+
+        return FunctionalCommand(
+            onInit=init,
+            onExecute=lambda: None,
+            onEnd=lambda interrupted: None,
+            isFinished=lambda: True,
         )
 
     def setState(self, newState: RobotState):
@@ -290,7 +365,7 @@ class Superstructure:
             if self.hasIndexer:
                 self.indexer.feed()
             if self.hasAgitator:
-                self.agitator.startOscillate(forwardSeconds=2.0, backwardSeconds=0.5)
+                self.agitator.feed()
         else:
             if self.hasIndexer:
                 self.indexer.stop()

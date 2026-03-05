@@ -140,7 +140,8 @@ class PhoenixSwerveModule(Subsystem):
         self.turningMotor.configurator.apply(turnLimits)
 
         # Control Requests
-        self.velocityRequest = MotionMagicVelocityVoltage(0, acceleration=ModuleConstants.kMagicMotionAcceleration).with_slot(0)
+        motionMagicVV = MotionMagicVelocityVoltage(0, acceleration=ModuleConstants.kMagicMotionAcceleration)
+        self.velocityRequest = motionMagicVV.with_slot(0).with_enable_foc(True)
         self.positionRequest = PositionVoltage(0).with_slot(0)
 
         # Init State
@@ -205,6 +206,9 @@ class PhoenixSwerveModule(Subsystem):
     # Control
 
     def setDesiredState(self, desired: SwerveModuleState) -> None:
+        if abs(desired.speed) < 0.06:  # m/s, tune 0.02–0.10
+            desired = SwerveModuleState(0.0, Rotation2d(self.getTurningPosition()))
+
         optimized = self._optimizeState(desired)
 
         driveRps = optimized.speed / self.driveMotorRotToMeters

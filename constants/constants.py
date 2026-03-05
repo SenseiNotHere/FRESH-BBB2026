@@ -6,7 +6,6 @@ from wpimath.geometry import Translation2d
 from wpimath.kinematics import SwerveDrive4Kinematics
 from wpimath.trajectory import TrapezoidProfileRadians
 
-from phoenix6.hardware import talon_fx
 from phoenix6.signals import NeutralModeValue
 
 from pathplannerlib.config import RobotConfig, ModuleConfig, DCMotor
@@ -163,21 +162,23 @@ class OIConstants:
 
 class AutoConstants:
 
-    moduleConfig = ModuleConfig(
-        maxDriveVelocityMPS=DrivingConstants.kMaxMetersPerSecond,
-        driveMotor=DCMotor.krakenX60().withReduction(ModuleConstants.kDrivingMotorReduction),
-        driveCurrentLimit=ModuleConstants.kDrivingMotorCurrentLimit,
-        numMotors=4,
-        wheelRadiusMeters=ModuleConstants.kWheelDiameterMeters / 2,
-        wheelCOF=1.0
-    )
+#    moduleConfig = ModuleConfig(
+#        maxDriveVelocityMPS=DrivingConstants.kMaxMetersPerSecond,
+#        driveMotor=DCMotor.krakenX60().withReduction(ModuleConstants.kDrivingMotorReduction),
+#        driveCurrentLimit=ModuleConstants.kDrivingMotorCurrentLimit,
+#        numMotors=4,
+#        wheelRadiusMeters=ModuleConstants.kWheelDiameterMeters / 2,
+#        wheelCOF=1.0
+#    )
 
-    config = RobotConfig(
-        massKG=60.0,
-        MOI=8.0,
-        moduleConfig=moduleConfig,
-        moduleOffsets=DrivingConstants.kModulePositions
-    )
+#    config = RobotConfig(
+#        massKG=68,
+#        MOI=8.0,
+#        moduleConfig=moduleConfig,
+#        moduleOffsets=DrivingConstants.kModulePositions
+#    )
+
+    config = RobotConfig.fromGUISettings()
 
     kUseSqrtControl = True
 
@@ -187,16 +188,13 @@ class AutoConstants:
     kMaxAngularSpeedRadiansPerSecond = 5.0
     kMaxAngularSpeedRadiansPerSecondSquared = 25.0
 
-    kPXController = 5.0
-    kPYController = 5.0
-    kPThetaController = 6.0
+    kPController = 1.0
+    kPThetaController = 0.5
 
     kIXController = 0.0
-    kIYController = 0.0
     kIThetaController = 0.0
 
     kDXController = 0.0
-    kDYController = 0.0
     kDThetaController = 0.0
 
     kThetaControllerConstraints = TrapezoidProfileRadians.Constraints(
@@ -295,6 +293,7 @@ class ClimberConstants:
     kD = 0.0
     kS = 2.4
     kFF = 0.0
+    kG = 0.5 # Normal values 0.5->2.0
 
     kVelocityP = 2.0
 

@@ -6,11 +6,13 @@ import commands2
 from commands2 import InstantCommand
 from commands2.button import CommandGenericHID
 
-from pathplannerlib.auto import NamedCommands
+from pathplannerlib.auto import NamedCommands, EventTrigger
 
 from wpilib import (
     XboxController,
-    SmartDashboard, SendableChooser
+    SmartDashboard,
+    SendableChooser,
+    DriverStation
 )
 
 from wpimath.geometry import (
@@ -62,11 +64,6 @@ class RobotContainer:
         if commands2.TimedCommandRobot.isSimulation():
             self.robotDrive.simPhysics = BadSimPhysics(self.robotDrive, robot)
 
-        # Auto Chooser
-
-        self.autoChooser = AutoBuilder.buildAutoChooser()
-        SmartDashboard.putData("Auto Chooser", self.autoChooser)
-
         # Test Chooser
         self.testChooser = SendableChooser()
         SmartDashboard.putData("Test Chooser", self.testChooser)
@@ -82,7 +79,7 @@ class RobotContainer:
         # Vision / Localization
         self.localizer = LimelightLocalizer(
             drivetrain=self.robotDrive,
-            flipIfRed=True,
+            flipIfRed=False,
         )
 
         self.limelight = LimelightCamera("limelight-front")
@@ -97,28 +94,22 @@ class RobotContainer:
             maxRotationSpeed=720,
         )
 
-        self.localizer.addCamera(
-            camera=self.limelightBack,
-            cameraPoseOnRobot=Translation3d(0.0, 0.0, 0.0),
-            cameraHeadingOnRobot=Rotation2d.fromDegrees(180),
-            minPercentFrame=0.07,
-            maxRotationSpeed=720,
-        )
+#        self.localizer.addCamera(
+#            camera=self.limelightBack,
+#            cameraPoseOnRobot=Translation3d(0.0, 0.0, 0.0),
+#            cameraHeadingOnRobot=Rotation2d.fromDegrees(180),
+#            minPercentFrame=0.07,
+#             maxRotationSpeed=720,
+#        )
 
         # Default Drive Command
-
+        redAlliance = DriverStation.getAlliance() == DriverStation.Alliance.kRed
         self.robotDrive.setDefaultCommand(
             HolonomicDrive(
                 self.robotDrive,
-                forwardSpeed=lambda: -self.driverController.getRawAxis(
-                    XboxController.Axis.kLeftY
-                ),
-                leftSpeed=lambda: -self.driverController.getRawAxis(
-                    XboxController.Axis.kLeftX
-                ),
-                rotationSpeed=lambda: self.driverController.getRawAxis(
-                    XboxController.Axis.kRightX
-                ),
+                forwardSpeed=lambda: -self.driverController.getRawAxis(XboxController.Axis.kLeftY),
+                leftSpeed=lambda: -self.driverController.getRawAxis(XboxController.Axis.kLeftX),
+                rotationSpeed=lambda: self.driverController.getRawAxis(XboxController.Axis.kRightX),
                 deadband=OIConstants.kDriveDeadband,
                 fieldRelative=True,
                 rateLimit=False,
@@ -226,13 +217,21 @@ class RobotContainer:
         self.buttonBindings.configureButtonBindings()
 
         # PathPlanner Named Commands
-        NamedCommands.registerCommand("DeployIntake", self.superstructure.createStateCommand(RobotState.INTAKE_DEPLOYED))
-        NamedCommands.registerCommand("RetractIntake", self.superstructure.createStateCommand(RobotState.INTAKE_RETRACTED))
-        NamedCommands.registerCommand("StartIntake", self.superstructure.createStateCommand(RobotState.INTAKING))
-        NamedCommands.registerCommand("PrepShot", self.superstructure.createStateCommand(RobotState.PREP_SHOT))
-        NamedCommands.registerCommand("SetIdle", self.superstructure.createStateCommand(RobotState.IDLE))
-        NamedCommands.registerCommand("ElevatorUp", self.superstructure.createStateCommand(RobotState.ELEVATOR_RISING))
-        NamedCommands.registerCommand("ElevatorDown", self.superstructure.createStateCommand(RobotState.ELEVATOR_LOWERING))
+        NamedCommands.registerCommand("DeployIntake", self.superstructure.autoCreateStateCommand(RobotState.INTAKE_DEPLOYED))
+        NamedCommands.registerCommand("RetractIntake", self.superstructure.autoCreateStateCommand(RobotState.INTAKE_RETRACTED))
+        NamedCommands.registerCommand("StartIntake", self.superstructure.autoCreateStateCommand(RobotState.INTAKING))
+        NamedCommands.registerCommand("PrepShot", self.superstructure.autoCreateStateCommand(RobotState.PREP_SHOT))
+        NamedCommands.registerCommand("SetIdle", self.superstructure.autoCreateStateCommand(RobotState.IDLE))
+        NamedCommands.registerCommand("ElevatorUp", self.superstructure.autoCreateStateCommand(RobotState.ELEVATOR_RISING))
+        NamedCommands.registerCommand("ElevatorDown", self.superstructure.autoCreateStateCommand(RobotState.ELEVATOR_LOWERING))
+
+        # PathPlanner Event Triggers
+        EventTrigger("ElevatorUp").whileTrue(self.superstructure.autoCreateStateCommand(RobotState.ELEVATOR_RISING))
+
+        # Auto Chooser
+
+        self.autoChooser = AutoBuilder.buildAutoChooser()
+        SmartDashboard.putData("Auto Chooser", self.autoChooser)
 
     # Autonomous
 

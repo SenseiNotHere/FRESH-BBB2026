@@ -34,7 +34,7 @@ def rotatePoseAcrossField(
     pose: Pose2d, field_length: float, field_width: float
 ) -> Pose2d:
     """
-    Mirrors a pose across the field (blue → red).
+    Mirrors a pose across the field (blue to red).
     """
     return Pose2d(
         field_length - pose.x,

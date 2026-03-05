@@ -37,7 +37,7 @@ from constants.constants import (
     ModuleConstants,
     AutoConstants
 )
-
+from commands.drive.holonomic_drive import HolonomicDrive
 from .wrapped_navx import NavxGyro
 
 U_TURN = Rotation2d.fromDegrees(180)
@@ -129,43 +129,36 @@ class DriveSubsystem(Subsystem):
         self.simPhysics = None
 
         AutoBuilder.configure(
-            self.getPose,  # Robot pose supplier
-            self.resetOdometryAuto,  # Reset odometry at auto start
-            self.getRobotRelativeSpeeds,  # MUST be robot-relative speeds
-            lambda speeds, _: self.driveRobotRelativeChassisSpeeds(speeds),
+            self.getPose,
+            self.resetOdometryAuto,
+            self.getRobotRelativeSpeeds,
+            lambda speeds, _: self.driveRobotRelativeChassisSpeeds(ChassisSpeeds(speeds.vx, speeds.vy, -speeds.omega)),
             PPHolonomicDriveController(
-                PIDConstants(
-                    AutoConstants.kPXController,
-                    AutoConstants.kIXController,
-                    AutoConstants.kDXController
-                ),
-                PIDConstants(
-                    AutoConstants.kPThetaController,
-                    AutoConstants.kIThetaController,
-                    AutoConstants.kDThetaController
-                )
+                PIDConstants(AutoConstants.kPController, 0, 0),
+                PIDConstants(AutoConstants.kPThetaController, 0, 0)
             ),
-            AutoConstants.config,  # RobotConfig
-            self.shouldFlipPath,  # Alliance-based flipping
-            self  # Subsystem requirement
+            AutoConstants.config,
+            self.shouldFlipPath,
+            self
         )
 
     def getRobotRelativeSpeeds(self) -> ChassisSpeeds:
         """Returns the current robot-relative ChassisSpeeds"""
         return DrivingConstants.kDriveKinematics.toChassisSpeeds(
             (
-                self.frontLeft.getState(),
-                self.frontRight.getState(),
-                self.backLeft.getState(),
-                self.backRight.getState(),
+            self.frontLeft.getState(),
+            self.frontRight.getState(),
+            self.backLeft.getState(),
+            self.backRight.getState(),
             )
         )
 
-    def shouldFlipPath(self):
+    @staticmethod
+    def shouldFlipPath():
         """
         :return: Whether to flip the path based on alliance color
         """
-        return DriverStation.getAlliance() == DriverStation.Alliance.kRed
+        return False #DriverStation.getAlliance() == DriverStation.Alliance.kRed
 
     def periodic(self) -> None:
         if self.simPhysics is not None:
@@ -369,10 +362,9 @@ class DriveSubsystem(Subsystem):
         self.backLeft.setDesiredState(rl)
         self.backRight.setDesiredState(rr)
 
-    def driveRobotRelativeChassisSpeeds(self, speeds: ChassisSpeeds) -> None:
-        discrete = ChassisSpeeds.discretize(speeds, 0.02)
+    def driveRobotRelativeChassisSpeeds(self, speeds: ChassisSpeeds, feedforwards=None) -> None:
+        states = DrivingConstants.kDriveKinematics.toSwerveModuleStates(speeds)
 
-        states = DrivingConstants.kDriveKinematics.toSwerveModuleStates(discrete)
         fl, fr, rl, rr = SwerveDrive4Kinematics.desaturateWheelSpeeds(
             states, DrivingConstants.kMaxMetersPerSecond
         )
