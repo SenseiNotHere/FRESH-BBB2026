@@ -3,7 +3,7 @@ from typing import Optional
 from commands2 import Subsystem
 from wpilib import DoubleSolenoid, PneumaticsModuleType, SmartDashboard, Timer
 
-from phoenix6.controls import PositionVoltage, VelocityVoltage, DutyCycleOut, MotionMagic, MotionMagicVoltage
+from phoenix6.controls import PositionVoltage, VelocityVoltage, DutyCycleOut, MotionMagicVoltage
 from phoenix6.hardware import TalonFX, CANcoder
 from phoenix6.configs import (
     TalonFXConfiguration,
