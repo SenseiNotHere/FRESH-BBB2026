@@ -44,15 +44,14 @@ class ShotCalculator(Subsystem):
         # Effective target (future SOTM logic goes here)
         _effective_target_pose = target_location - drivetrain_location
 
-        relative_pose = target_location - drivetrain_location
+        vector_to_goal = target_location - drivetrain_location
 
-        _effective_yaw = relative_pose.angle().radians()
+        _effective_yaw = vector_to_goal.angle().radians()
         SmartDashboard.putNumber("ShotCalc/EffectiveYaw", 180 * _effective_yaw / math.pi)
         SmartDashboard.putNumber("ShotCalc/Distance", _target_distance)
 
         if self.drivetrain.field is not None:
-            vector_to_goal = target_location.translation().toTranslation2d() - drivetrain_pose.translation()
-            self.drivetrain.field.getObject("shot-calc-dir").setPoses(draw_arrow(drivetrain_pose.translation(), vector_to_goal))
+            self.drivetrain.field.getObject("shot-calc-dir").setPoses(draw_arrow(drivetrain_location, vector_to_goal))
 
     # Public API
 
