@@ -19,14 +19,8 @@ class ShotCalculator(Subsystem):
 
     def __init__(self, drivetrain):
         super().__init__()
-
         self.drivetrain = drivetrain
-
-        # Computed outputs
-        self._target_distance: float = 0.0
-        self._target_speed_rps: float = 0.0
-        self._effective_target_pose: Pose3d = Hub.CENTER
-        self._effective_yaw: float = 0.0
+        self._target_speed_rps = 0.0
 
     # Periodic
 
@@ -38,29 +32,23 @@ class ShotCalculator(Subsystem):
             target_location = Hub.BLUE_HUB
 
         drivetrain_pose: Pose2d = self.drivetrain.getPose()
+        drivetrain_location = drivetrain_pose.translation()
 
         # 2D Distance
-        self._target_distance = (
-            drivetrain_pose.translation()
-            .distance(target_location)
-        )
+        _target_distance = drivetrain_location.distance(target_location)
 
         # Distance -> Speed Lookup
         lookup = ShooterConstants.DISTANCE_TO_RPS
-        self._target_speed_rps = lookup.get(self._target_distance)
+        self._target_speed_rps = lookup.get(_target_distance)
 
         # Effective target (future SOTM logic goes here)
-        self._effective_target_pose = target_location
+        _effective_target_pose = target_location - drivetrain_location
 
-        relative_pose = (
-            target_location
-        )
+        relative_pose = target_location - drivetrain_location
 
-        target_location =
-
-        self._effective_yaw = relative_pose.rotation().radians()
-        SmartDashboard.putNumber("ShotCalc/EffectiveYaw", 180 * self._effective_yaw / math.pi)
-        SmartDashboard.putNumber("ShotCalc/Distance", self._target_distance)
+        _effective_yaw = relative_pose.angle().radians()
+        SmartDashboard.putNumber("ShotCalc/EffectiveYaw", 180 * _effective_yaw / math.pi)
+        SmartDashboard.putNumber("ShotCalc/Distance", _target_distance)
 
         if self.drivetrain.field is not None:
             vector_to_goal = target_location.translation().toTranslation2d() - drivetrain_pose.translation()
@@ -68,17 +56,8 @@ class ShotCalculator(Subsystem):
 
     # Public API
 
-    def getTargetDistance(self) -> float:
-        return self._target_distance
-
     def getTargetSpeedRPS(self) -> float:
         return self._target_speed_rps
-
-    def getEffectiveTargetPose(self) -> Pose3d:
-        return self._effective_target_pose
-
-    def getEffectiveYaw(self) -> float:
-        return self._effective_yaw
 
 
 def draw_arrow(start: Translation2d, directionVector: Translation2d, nPoints=11, size=0.85, tip=0.1) -> List[Pose2d]:
