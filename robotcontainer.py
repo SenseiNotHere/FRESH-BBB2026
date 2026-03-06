@@ -34,6 +34,7 @@ from subsystems.orchestra.orchestrasubsystem import OrchestraSubsystem
 from superstructure.superstructure import Superstructure
 from superstructure.robot_state import RobotState
 from commands.drive.holonomic_drive import HolonomicDrive
+from commands.drive.reset_xy import ResetXY
 
 from commands.climber.climber_commands import ManualClimb
 
@@ -88,22 +89,22 @@ class RobotContainer:
 
         self.localizer.addCamera(
             camera=self.limelight,
-            cameraPoseOnRobot=Translation3d(0.0, 0.0, 0.0),
-            cameraHeadingOnRobot=Rotation2d.fromDegrees(0),
+            cameraPoseOnRobot=Translation3d(-0.17, 0.0, 0.508),
+            cameraHeadingOnRobot=Rotation2d.fromDegrees(180),
             minPercentFrame=0.07,
             maxRotationSpeed=720,
         )
 
-#        self.localizer.addCamera(
-#            camera=self.limelightBack,
-#            cameraPoseOnRobot=Translation3d(0.0, 0.0, 0.0),
-#            cameraHeadingOnRobot=Rotation2d.fromDegrees(180),
-#            minPercentFrame=0.07,
-#             maxRotationSpeed=720,
-#        )
+        self.localizer.addCamera(
+            camera=self.limelightBack,
+            cameraPoseOnRobot=Translation3d(-0.17, -0.165, 0.406),
+            cameraHeadingOnRobot=Rotation2d.fromDegrees(270),
+            minPercentFrame=0.07,
+             maxRotationSpeed=720,
+        )
 
         # Default Drive Command
-        redAlliance = DriverStation.getAlliance() == DriverStation.Alliance.kRed
+        isRedAlliance = DriverStation.getAlliance() == DriverStation.Alliance.kRed
         self.robotDrive.setDefaultCommand(
             HolonomicDrive(
                 self.robotDrive,
@@ -224,6 +225,8 @@ class RobotContainer:
         NamedCommands.registerCommand("SetIdle", self.superstructure.autoCreateStateCommand(RobotState.IDLE))
         NamedCommands.registerCommand("ElevatorUp", self.superstructure.autoCreateStateCommand(RobotState.ELEVATOR_RISING))
         NamedCommands.registerCommand("ElevatorDown", self.superstructure.autoCreateStateCommand(RobotState.ELEVATOR_LOWERING))
+        NamedCommands.registerCommand('ResetXYRed', ResetXY(8, 8, 180, self.robotDrive))
+        NamedCommands.registerCommand('ResetXYBlue', ResetXY(8, 8, 0, self.robotDrive))
 
         # PathPlanner Event Triggers
         EventTrigger("ElevatorUp").whileTrue(self.superstructure.autoCreateStateCommand(RobotState.ELEVATOR_RISING))

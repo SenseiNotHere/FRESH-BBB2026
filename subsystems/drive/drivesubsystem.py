@@ -6,6 +6,7 @@ import typing
 import wpilib
 
 from commands2 import Subsystem
+from numpy.ma.core import angle
 from wpimath.filter import SlewRateLimiter
 from wpimath.geometry import (
     Pose2d,
@@ -247,6 +248,7 @@ class DriveSubsystem(Subsystem):
             ),
             pose,
         )
+        print(f"Angle{pose.rotation().degrees()}")
 
     def adjustOdometry(self, dTrans: Translation2d, dRot: Rotation2d):
         """Adjusts the odometry by a specified translation and rotation delta.

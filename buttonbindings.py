@@ -67,12 +67,12 @@ class ButtonBindings:
         )
 
         # Right Trigger = Follow hub and shoot
-#        self.driverController.axisGreaterThan(
-#            XboxController.Axis.kRightTrigger,
-#            threshold=0.05
-#        ).whileTrue(
-#            FollowShootHub(self.robotContainer.superstructure, self.robotDrive)
-#        )
+        self.driverController.axisGreaterThan(
+            XboxController.Axis.kRightTrigger,
+            threshold=0.05
+        ).whileTrue(
+            FollowShootHub(self.robotContainer.superstructure, self.robotDrive)
+        )
 
         # Left Trigger = Tower dock
         targetPos = getClosestClimbPose(self.robotDrive)

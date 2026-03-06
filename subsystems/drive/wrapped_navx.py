@@ -12,7 +12,7 @@ class Signal(object):
     status: StatusCode = StatusCode.OK
 
 
-GYRO_OVERSHOOT_FRACTION = 0.0 / 360
+GYRO_OVERSHOOT_FRACTION = -1.75 / 360
 # ^^ example: set it = +3.5 / 360 if your NavX gyro overshoots by +3.5 degrees on each 360 degree turn
 
 

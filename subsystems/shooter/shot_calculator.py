@@ -2,7 +2,7 @@ import math
 from typing import List
 
 from commands2 import Subsystem
-from wpilib import SmartDashboard
+from wpilib import SmartDashboard, DriverStation
 from wpimath.geometry import Pose2d, Pose3d, Translation2d, Rotation2d
 
 from constants.field_constants import Hub
@@ -22,8 +22,6 @@ class ShotCalculator(Subsystem):
 
         self.drivetrain = drivetrain
 
-        self.target_location: Pose3d = Hub.CENTER
-
         # Computed outputs
         self._target_distance: float = 0.0
         self._target_speed_rps: float = 0.0
@@ -34,12 +32,17 @@ class ShotCalculator(Subsystem):
 
     def periodic(self):
 
+        if DriverStation.getAlliance() == DriverStation.Alliance.kRed:
+            target_location = Hub.RED_HUB
+        else:
+            target_location = Hub.BLUE_HUB
+
         drivetrain_pose: Pose2d = self.drivetrain.getPose()
 
         # 2D Distance
         self._target_distance = (
             drivetrain_pose.translation()
-            .distance(self.target_location.toPose2d().translation())
+            .distance(target_location)
         )
 
         # Distance -> Speed Lookup
@@ -47,20 +50,20 @@ class ShotCalculator(Subsystem):
         self._target_speed_rps = lookup.get(self._target_distance)
 
         # Effective target (future SOTM logic goes here)
-        self._effective_target_pose = self.target_location
+        self._effective_target_pose = target_location
 
         relative_pose = (
-            self.target_location
-            .toPose2d()
-            .relativeTo(drivetrain_pose)
+            target_location
         )
+
+        target_location =
 
         self._effective_yaw = relative_pose.rotation().radians()
         SmartDashboard.putNumber("ShotCalc/EffectiveYaw", 180 * self._effective_yaw / math.pi)
         SmartDashboard.putNumber("ShotCalc/Distance", self._target_distance)
 
         if self.drivetrain.field is not None:
-            vector_to_goal = self.target_location.translation().toTranslation2d() - drivetrain_pose.translation()
+            vector_to_goal = target_location.translation().toTranslation2d() - drivetrain_pose.translation()
             self.drivetrain.field.getObject("shot-calc-dir").setPoses(draw_arrow(drivetrain_pose.translation(), vector_to_goal))
 
     # Public API

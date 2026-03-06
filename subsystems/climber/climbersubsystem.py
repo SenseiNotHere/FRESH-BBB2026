@@ -104,8 +104,8 @@ class Climber(Subsystem):
             .with_k_d(ClimberConstants.kD)
             .with_k_v(ClimberConstants.kFF)
             .with_k_s(ClimberConstants.kS)
-            .with_k_g(ClimberConstants.kG)
-            .with_gravity_type(GravityTypeValue.ELEVATOR_STATIC)
+#            .with_k_g(ClimberConstants.kG)
+#            .with_gravity_type(GravityTypeValue.ELEVATOR_STATIC)
         )
         self.motor.configurator.apply(slotConfig)
 
@@ -129,8 +129,8 @@ class Climber(Subsystem):
             .with_stator_current_limit_enable(True)
         )
         self.motor.configurator.apply(currentLimits)
-        self.positionRequest = MotionMagicVoltage(0).with_slot(0).with_enable_foc(True)
-#        self.positionRequest = PositionVoltage(0).with_slot(0)
+#        self.positionRequest = MotionMagicVoltage(0).with_slot(0).with_enable_foc(True)
+        self.positionRequest = PositionVoltage(0).with_slot(0)
         self.velocityRequest = VelocityVoltage(0).with_slot(1)
 
         # State

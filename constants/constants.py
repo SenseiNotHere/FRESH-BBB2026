@@ -73,7 +73,7 @@ class ModuleConstants:
     kDrivingMotorReduction = 6.12
     kTurningMotorReduction = 287 / 11.0
 
-    kWheelDiameterMeters = 0.0965
+    kWheelDiameterMeters = ((0.0965 / 0.97) / 0.98)
     kWheelCircumferenceMeters = kWheelDiameterMeters * math.pi
 
     # Derived Values
