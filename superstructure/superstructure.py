@@ -52,7 +52,6 @@ class Superstructure:
         self.hasShooter = self.shooter is not None
         self.hasIndexer = self.indexer is not None
         self.hasAgitator = self.agitator is not None
-        self.hasShotCalc = self.shotCalculator is not None
         self.hasIntake = self.intake is not None
         self.hasClimber = self.climber is not None
         self.hasVision = self.vision is not None
@@ -111,25 +110,6 @@ class Superstructure:
 
         self._update_readiness()
 
-        # Intake request
-        if self._request_intake and self.hasIntake:
-            self.intake.startIntaking()
-
-        # Shooter request
-        if self._request_shooter and self.hasShooter:
-
-            if self.hasShotCalc:
-                target_rps = self.shotCalculator.getTargetSpeedRPS()
-                self.shooter.setTargetRPS(target_rps)
-            else:
-                self.shooter.useDashboardPercent()
-
-            if self.robot_readiness.canFeed:
-                if self.hasIndexer:
-                    self.indexer.feed()
-                if self.hasAgitator:
-                    self.agitator.feed()
-
         handler = self._state_handlers.get(self.robot_state)
         if handler:
             handler()
@@ -142,7 +122,7 @@ class Superstructure:
     def _update_readiness(self):
 
         # Shooter readiness
-        self.robot_readiness.shooterReady = self.shooter.atSpeed(tolerance_rpm=100)
+        self.robot_readiness.shooterReady = self.shooter.atSpeed(tolerance_rpm=500)
 
         # Intake readiness
         self.robot_readiness.intakeDeployed = self.intake.isDeployed()
@@ -223,10 +203,11 @@ class Superstructure:
                 self.setState(RobotState.IDLE)
 
         return FunctionalCommand(
-            onInit=on_init,
-            onExecute=lambda: None,
-            onEnd=on_end,
-            isFinished=lambda: finishImmediately
+            on_init,
+            lambda: None,
+            on_end,
+            lambda: finishImmediately,
+            self.drivetrain,
         )
 
     def autoCreateStateCommand(self, state: RobotState):
@@ -236,10 +217,11 @@ class Superstructure:
             self.setState(state)
 
         return FunctionalCommand(
-            onInit=init,
-            onExecute=lambda: None,
-            onEnd=lambda interrupted: None,
-            isFinished=lambda: True,
+            init,
+            lambda: None,
+            lambda interrupted: None,
+            lambda: True,
+            self.drivetrain,
         )
 
     def setState(self, newState: RobotState):
@@ -316,61 +298,21 @@ class Superstructure:
         """
         Handles the intaking state by starting the intake.
         """
-
-        if self.hasIntake:
-            self.intake.startIntaking()
+        pass
 
     # Start prep shot on entry
     def _handle_prep_shot(self):
         """
         Handles the prep shot state by spinning up the shooter and waiting for it to be ready.
         """
-        # Spin up shooter
-        if self.hasShotCalc:
-            target_rps = self.shotCalculator.getTargetSpeedRPS()
-            self.shooter.setTargetRPS(target_rps)
-        else:
-            self.shooter.useDashboardPercent()
-
-        if self.hasIndexer:
-            self.indexer.stop()
-        if self.hasAgitator:
-            self.agitator.stop()
-
-        # Debounced transition to SHOOTING
-        now = Timer.getFPGATimestamp()
-
-        if self.robot_readiness.shooterReady:
-            if self._shooter_ready_since is None:
-                self._shooter_ready_since = now
-            elif (now - self._shooter_ready_since) >= 0.12:
-                self.setState(RobotState.SHOOTING)
-        else:
-            self._shooter_ready_since = None
+        pass
 
     # Start shooting on entry
     def _handle_shooting(self):
         """
         Handles the shooting state by spinning up the shooter and starting the indexer and agitator.
         """
-        # Keep spinning
-        if self.hasShotCalc:
-            target_rps = self.shotCalculator.getTargetSpeedRPS()
-            self.shooter.setTargetRPS(target_rps)
-        else:
-            self.shooter.useDashboardPercent()
-
-        # Feed ONLY when ready
-        if self.robot_readiness.canFeed:
-            if self.hasIndexer:
-                self.indexer.feed()
-            if self.hasAgitator:
-                self.agitator.feed()
-        else:
-            if self.hasIndexer:
-                self.indexer.stop()
-            if self.hasAgitator:
-                self.agitator.stop()
+        pass
 
     # Start elevator movement on entry
     def _handle_elevator_states(self):
@@ -441,12 +383,6 @@ class Superstructure:
         if not self.hasIntake:
             return
 
-        if self.robot_state == RobotState.INTAKE_DEPLOYED:
-            self.intake.deploy()
-
-        elif self.robot_state == RobotState.INTAKE_RETRACTED:
-            self.intake.stow()
-
         # After executing, go back to IDLE
         self.setState(RobotState.IDLE)
 
@@ -469,24 +405,19 @@ class Superstructure:
     # Helper Methods
 
     def _stop_shooter(self):
-        if self.hasShooter:
-            self.shooter.stop()
+        pass
 
     def _stop_indexer(self):
-        if self.hasIndexer:
-            self.indexer.stop()
+        pass
 
     def _stop_agitator(self):
-        if self.hasAgitator:
-            self.agitator.stop()
+        pass
 
     def _stop_intake(self):
-        if self.hasIntake:
-            self.intake.stop()
+        pass
 
     def _stow_intake(self):
-        if self.hasIntake:
-            self.intake.stow()
+        pass
 
     def _stop_orchestra(self):
         if self.hasOrchestra:
