@@ -144,7 +144,7 @@ class LimelightLocalizer(Subsystem):
         flipped = None
         if self.username == "lvuser" and self.flipIfRed is not None:
             # if we are running on RoboRIO, wait until driver station gives us alliance color
-            color = DriverStation.getAlliance()
+            color = self.drivetrain.getAlliance()
             if color is None:
                 return  # we cannot yet decide on whether the field should be flipped
             flipped = (color == DriverStation.Alliance.kRed) and self.flipIfRed

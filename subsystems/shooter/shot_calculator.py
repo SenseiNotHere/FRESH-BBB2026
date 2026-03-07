@@ -26,7 +26,7 @@ class ShotCalculator(Subsystem):
 
     def periodic(self):
 
-        if DriverStation.getAlliance() == DriverStation.Alliance.kRed:
+        if self.drivetrain.getAlliance() == DriverStation.Alliance.kRed:
             target_location = Hub.RED_HUB
         else:
             target_location = Hub.BLUE_HUB
