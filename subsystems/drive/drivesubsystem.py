@@ -234,7 +234,7 @@ class DriveSubsystem(Subsystem):
         """
         return self.odometry.getPose()
 
-    def resetOdometry(self, pose: Pose2d, resetGyro=True) -> None:
+    def resetOdometry(self, pose: Pose2d, resetGyro=True, reason="unknown") -> None:
         """Resets the odometry to the specified pose.
 
         :param pose: The pose to which to set the odometry.
@@ -255,18 +255,12 @@ class DriveSubsystem(Subsystem):
         )
         self.odometryHeadingOffset = self.odometry.getPose().rotation() - self.getGyroHeading()
 
+        SmartDashboard.putString("ResetXY", f"{int(pose.rotation().degrees())} deg: {reason}")
+
+
     def resetOdometryAuto(self, pose: Pose2d):
-        self.odometry.resetPosition(
-            self.getGyroHeading(),
-            (
-                self.frontLeft.getPosition(),
-                self.frontRight.getPosition(),
-                self.backLeft.getPosition(),
-                self.backRight.getPosition(),
-            ),
-            pose,
-        )
-        print(f"Angle{pose.rotation().degrees()}")
+        self.resetOdometry(pose, reason="PathPlanner")
+
 
     def adjustOdometry(self, dTrans: Translation2d, dRot: Rotation2d):
         """Adjusts the odometry by a specified translation and rotation delta.

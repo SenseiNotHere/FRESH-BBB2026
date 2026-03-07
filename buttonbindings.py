@@ -44,7 +44,8 @@ class ButtonBindings:
                 x=0.0,
                 y=0.0,
                 headingDegrees=0.0,
-                drivetrain=self.robotDrive
+                drivetrain=self.robotDrive,
+                reason="pov(0)"
             )
         )
 
