@@ -104,7 +104,6 @@ class RobotContainer:
         )
 
         # Default Drive Command
-        isRedAlliance = DriverStation.getAlliance() == DriverStation.Alliance.kRed
         self.robotDrive.setDefaultCommand(
             HolonomicDrive(
                 self.robotDrive,

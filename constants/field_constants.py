@@ -9,27 +9,6 @@ FIELD_LENGTH = inchesToMeters(651.22)
 FIELD_WIDTH = inchesToMeters(317.69)
 
 
-# Alliance-based pose flipping
-
-def rotateBluePoseIfNecessary(original: Pose2d) -> Pose2d:
-    """
-    Rotates a blue-alliance pose to red alliance if needed.
-    You must implement shouldFlipValueToRed() yourself.
-    """
-    if shouldFlipValueToRed():
-        return rotatePoseAcrossField(original, FIELD_LENGTH, FIELD_WIDTH)
-    return original
-
-
-def shouldFlipValueToRed() -> bool:
-    """
-    Replace this with DriverStation alliance logic.
-    """
-
-    alliance = DriverStation.getAlliance()
-    return alliance == DriverStation.Alliance.kRed
-
-
 def rotatePoseAcrossField(
     pose: Pose2d, field_length: float, field_width: float
 ) -> Pose2d:

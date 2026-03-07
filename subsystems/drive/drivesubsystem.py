@@ -23,7 +23,7 @@ from wpilib import (
     SmartDashboard,
     Field2d,
     DriverStation,
-    Timer
+    Timer, SendableChooser
 )
 
 from commands.drive.aim_to_direction import AimToDirectionConstants
@@ -143,6 +143,14 @@ class DriveSubsystem(Subsystem):
             self
         )
 
+        self.alliance = None
+        self.allianceOverride = SendableChooser()
+        self.allianceOverride.setDefaultOption("use-field", None)
+        self.allianceOverride.addOption("force-red", DriverStation.Alliance.kRed)
+        self.allianceOverride.addOption("force-blue", DriverStation.Alliance.kBlue)
+        SmartDashboard.putData("Alliance/override", self.allianceOverride)
+        SmartDashboard.putString("Alliance/used", "None")
+
     def getRobotRelativeSpeeds(self) -> ChassisSpeeds:
         """Returns the current robot-relative ChassisSpeeds"""
         return DrivingConstants.kDriveKinematics.toChassisSpeeds(
@@ -159,11 +167,21 @@ class DriveSubsystem(Subsystem):
         """
         :return: Whether to flip the path based on alliance color
         """
-        return False #DriverStation.getAlliance() == DriverStation.Alliance.kRed
+        return False #self.getAlliance() == DriverStation.Alliance.kRed
+
+    def getAlliance(self):
+        return self.alliance
 
     def periodic(self) -> None:
         if self.simPhysics is not None:
             self.simPhysics.periodic()
+
+        alliance: DriverStation.Alliance = self.allianceOverride.getSelected()
+        if alliance is None:
+            alliance = DriverStation.getAlliance()
+        if alliance != self.alliance:
+            SmartDashboard.putString("Alliance/used", "None" if alliance is None else str(alliance).split(".")[-1])
+            self.alliance = alliance
 
         # Sync turning encoders on all modules to prevent drift
         self.frontLeft.periodic()
@@ -342,7 +360,7 @@ class DriveSubsystem(Subsystem):
         # field relative conversion must happen before rate limiting, since rate limiting is optional
         if fieldRelative:
             heading = self.getPose().rotation()
-            if DriverStation.getAlliance() == DriverStation.Alliance.kRed:
+            if self.alliance == DriverStation.Alliance.kRed:
                 heading = heading + U_TURN
             targetChassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedGoal, ySpeedGoal, rotSpeedGoal, heading)
         else:

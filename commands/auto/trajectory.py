@@ -114,7 +114,7 @@ class JerkyTrajectory(commands2.Command):
     def getRemainingWaypointsAheadOfUs(self):
         mustFlip = False
         if self.flipIfRed:
-            mustFlip = DriverStation.getAlliance() == DriverStation.Alliance.kRed
+            mustFlip = self.drivetrain.getAlliance() == DriverStation.Alliance.kRed
 
         SmartDashboard.putString("command/c" + self.__class__.__name__, "running")
 

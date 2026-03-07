@@ -57,7 +57,7 @@ class PointTowardsLocation(commands2.Command):
 
     def initialize(self):
         self.active = False
-        color = DriverStation.getAlliance()
+        color = self.drivetrain.getAlliance()
         if color == DriverStation.Alliance.kRed:
             self.activeTargetLocation = self.locationIfRed
             SmartDashboard.putString("command/c" + self.__class__.__name__, "assuming red alliance")
@@ -67,7 +67,7 @@ class PointTowardsLocation(commands2.Command):
 
         raw = (
             self.locationIfRed
-            if DriverStation.getAlliance() == DriverStation.Alliance.kRed
+            if self.drivetrain.getAlliance() == DriverStation.Alliance.kRed
             else self.location
         )
 

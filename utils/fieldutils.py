@@ -8,7 +8,7 @@ from constants.field_constants import Tower
 def getClosestClimbPose(drivetrain) -> Pose2d:
     pose = drivetrain.getPose()
 
-    isRed = DriverStation.getAlliance() == DriverStation.Alliance.kRed
+    isRed = drivetrain.getAlliance() == DriverStation.Alliance.kRed
 
     if isRed:
         top = Tower.RED_TOWER_CLIMB_TOP
