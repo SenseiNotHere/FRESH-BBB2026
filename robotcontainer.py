@@ -224,8 +224,8 @@ class RobotContainer:
         NamedCommands.registerCommand("SetIdle", self.superstructure.autoCreateStateCommand(RobotState.IDLE))
         NamedCommands.registerCommand("ElevatorUp", self.superstructure.autoCreateStateCommand(RobotState.ELEVATOR_RISING))
         NamedCommands.registerCommand("ElevatorDown", self.superstructure.autoCreateStateCommand(RobotState.ELEVATOR_LOWERING))
-        NamedCommands.registerCommand('ResetXYRed', ResetXY(8, 8, 180, self.robotDrive))
-        NamedCommands.registerCommand('ResetXYBlue', ResetXY(8, 8, 0, self.robotDrive))
+        NamedCommands.registerCommand('ResetXYRed', ResetXY(8, 8, 180, self.robotDrive, reason="ResetXYRed"))
+        NamedCommands.registerCommand('ResetXYBlue', ResetXY(8, 8, 0, self.robotDrive, reason="ResetXYBlue"))
 
         # PathPlanner Event Triggers
         EventTrigger("ElevatorUp").whileTrue(self.superstructure.autoCreateStateCommand(RobotState.ELEVATOR_RISING))

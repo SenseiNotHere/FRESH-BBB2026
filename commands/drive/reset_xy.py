@@ -5,7 +5,7 @@ from wpimath.geometry import Rotation2d, Pose2d, Translation2d
 
 
 class ResetXY(commands2.Command):
-    def __init__(self, x, y, headingDegrees, drivetrain):
+    def __init__(self, x, y, headingDegrees, drivetrain, reason="no reason"):
         """
         Reset the starting (X, Y) and heading (in degrees) of the robot to where they should be.
         :param x: X
@@ -14,12 +14,13 @@ class ResetXY(commands2.Command):
         :param drivetrain: drivetrain on which the (X, Y, heading) should be set
         """
         super().__init__()
+        self.reason = reason
         self.drivetrain = drivetrain
         self.position = Pose2d(Translation2d(x, y), Rotation2d.fromDegrees(headingDegrees))
         self.addRequirements(drivetrain)
 
     def initialize(self):
-        self.drivetrain.resetOdometry(self.position)
+        self.drivetrain.resetOdometry(self.position, reason=self.reason)
 
     def isFinished(self) -> bool:
         return True  # this is an instant command, it finishes right after it initialized
@@ -43,7 +44,7 @@ class ResetSwerveFront(commands2.Command):
 
     def initialize(self):
         pose = self.drivetrain.getPose()
-        self.drivetrain.resetOdometry(pose)
+        self.drivetrain.resetOdometry(pose, reason="ResetSwerveFront")
 
     def isFinished(self) -> bool:
         return True  # this is an instant command, it finishes right after it initialized
