@@ -20,8 +20,8 @@ class KrakenX60:
 class DrivingConstants:
 
     # Physical Limits
-    kMaxMetersPerSecond = 3.0
-    kMaxAngularSpeed = math.tau
+    kMaxMetersPerSecond = 4.8
+    kMaxAngularSpeed = 2 * math.tau
 
     # Slew Rate Limiting
     kMagnitudeSlewRate = 9.8
@@ -182,10 +182,10 @@ class AutoConstants:
 
     kUseSqrtControl = True
 
-    kMaxMetersPerSecond = 1.2
-    kMaxAccelerationMetersPerSecondSquared = 3.5
+    kMaxMetersPerSecond = 4.8
+    kMaxAccelerationMetersPerSecondSquared = 6.5
 
-    kMaxAngularSpeedRadiansPerSecond = 5.0
+    kMaxAngularSpeedRadiansPerSecond = math.tau
     kMaxAngularSpeedRadiansPerSecondSquared = 25.0
 
     kPController = 1.0
