@@ -290,8 +290,8 @@ class SwerveTrajectory(JerkyTrajectory):
         thetaController.enableContinuousInput(-math.pi, math.pi)
 
         driveController = HolonomicDriveController(
-            PIDController(AutoConstants.kPXController, 0, 0),
-            PIDController(AutoConstants.kPXController, 0, 0),
+            PIDController(AutoConstants.kDXController, 0, 0),
+            PIDController(AutoConstants.kDXController, 0, 0),
             thetaController,
         )
 
