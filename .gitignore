@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+
+# VSCode / JetBrains / Editor stuff
+.vscode/
+.idea/
+.wpilib/
+
+# CTRE Sim
+ctre_sim/
+
+# macOS Stuff
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100/
+.Trashes/
+.fseventsd/
+.DocumentRevisions-V100/
+.TemporaryItems/
+.VolumeIcon.icns
+.apdisk
+.AppleDB
+.AppleDesktop
+
+# Sim GUI
+simgui.json
+simgui-window.json
+simgui-ds.json

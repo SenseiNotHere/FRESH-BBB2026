@@ -1,0 +1,59 @@
+from dataclasses import dataclass
+from enum import Enum
+
+
+class RobotState(Enum):
+
+    # General
+    IDLE = 0
+    PLAYING_SONG = 1
+    PLAYING_CHAMPIONSHIP_SONG = 2
+
+    # Intake
+    INTAKE_STOWED = 10
+    INTAKE_DEPLOYED = 11
+    INTAKING = 12
+
+    # Shooter
+    PREP_SHOT = 20
+    SHOOTING = 21
+    FOLLOWING_HUB_SHOOT = 22   # Follow hub and shoot
+
+    # Driving
+    APPROACHING_OUTPOST = 30
+    APPROACHING_TOWER = 31
+
+    # Jam Handling
+    AGITATOR_OPPOSITE = 40
+
+    # Extra Gameplay
+    PASSING_FUEL = 50
+
+    # Autonomous
+    PREP_SHOT_AUTONOMOUS = 100
+    INTAKING_AUTONOMOUS = 101
+    SHOOTING_AUTONOMOUS = 102
+
+
+@dataclass
+class RobotReadiness:
+    shooterReady: bool = False
+    intakeDeployed: bool = False
+    canFeed: bool = False
+
+    def setRobotReadiness(self, readiness: ReadinessList, value: bool):
+        """
+        Sets the readiness value for the specified readiness flag.
+        """
+        setattr(self, readiness.value, value)
+
+    def getRobotReadiness(self, readiness: ReadinessList):
+        """
+        :return: The current readiness value for the specified readiness flag.
+        """
+        return getattr(self, readiness.value)
+
+class ReadinessList(Enum):
+    SHOOTER_READY = 'shooterReady'
+    INTAKE_DEPLOYED = 'intakeDeployed'
+    CAN_FEED = 'canFeed'
