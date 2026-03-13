@@ -21,7 +21,7 @@ from wpilib import SmartDashboard, DriverStation
 
 
 FIELD_WIDTH = 8.052
-FIELD_LENGTH = 17.55
+FIELD_LENGTH = 16.54
 U_TURN = Rotation2d.fromDegrees(180)
 
 
