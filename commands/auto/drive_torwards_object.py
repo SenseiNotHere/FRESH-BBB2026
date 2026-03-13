@@ -40,7 +40,7 @@ class SwerveTowardsObject(commands2.Command):
 
             # create a command for driving towards the gamepiece, using existing Limelight camera and pipeline 1 inside it
             driveToGamepiece = SwerveTowardsObject(
-                drivetrain=self.robotDrive,
+                drivetrain=self.vroomvroom,
                 speed=lambda: self.driverController.getRawAxis(XboxController.Axis.kLeftTrigger),  # speed controlled by "left trigger" stick of the joystick
                 maxLateralSpeed=1.0,
                 camera=self.frontPickupCamera,
@@ -225,7 +225,7 @@ class DriveTowardsObject(commands2.Command):
 
             # create a command for driving towards the gamepiece, using existing Limelight camera and pipeline 1 inside it
             driveToGamepiece = DriveTowardsObject(
-                drivetrain=self.robotDrive,
+                drivetrain=self.vroomvroom,
                 speed=lambda: self.driverController.getRawAxis(XboxController.Axis.kLeftTrigger),  # speed controlled by "left trigger" stick of the joystick
                 maxTurnSpeed=1.0,
                 camera=self.frontPickupCamera,

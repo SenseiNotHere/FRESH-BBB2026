@@ -13,12 +13,19 @@ from constants.constants import IndexerConstants
 
 
 class IndexerSubsystem(Subsystem):
+    def __init__(self, motorCANID: int, motorInverted: bool):
+        """
+        Indexer Subsystem.
 
-    def __init__(
-        self,
-        motorCANID: int,
-        motorInverted: bool
-    ):
+        This subsystem controls the robot's indexer mechanism using a single motor.
+        It can be instantiated multiple times if needed.
+
+        Hardware:
+        - Spark MAX controlling a brushless motor used to move game pieces through the indexer.
+
+        :param motorCANID: CAN ID of the Spark MAX controlling the indexer motor.
+        :param motorInverted: Whether the indexer motor is inverted.
+        """
         super().__init__()
 
         # Motor Setup

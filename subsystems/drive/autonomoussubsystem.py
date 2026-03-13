@@ -22,8 +22,18 @@ if TYPE_CHECKING:
 
 
 class AutonomousSubsystem(Subsystem):
-
-    def __init__(self, drivetrain: DriveSubsystem, robotContainer: "RobotContainer"):
+    def __init__(
+            self,
+            drivetrain: DriveSubsystem,
+            robotContainer: "RobotContainer"
+    ):
+        """
+        Autonomous Subsystem class. Handles all autonomous-related functionality.
+        This is a singleton class. Meaning there should only ever be one instance of this class.
+        
+        :param drivetrain: The drivetrain subsystem.
+        :param robotContainer: The robot container.
+        """
         super().__init__()
 
         self.drivetrain = drivetrain
@@ -34,9 +44,9 @@ class AutonomousSubsystem(Subsystem):
         self.registerEventTriggers()
 
         AutoBuilder.configure(
-            drivetrain.getPose,
-            drivetrain.resetOdometryAuto,
-            drivetrain.getRobotRelativeSpeeds,
+            self._getPose,
+            self._resetOdometry,
+            self._getRobotRelativeSpeeds,
             self._driveRobotRelative,
             PPHolonomicDriveController(
                 PIDConstants(AutoConstants.kPController, 0, 0),
@@ -44,7 +54,7 @@ class AutonomousSubsystem(Subsystem):
             ),
             AutoConstants.config,
             self.shouldFlipPath,
-            drivetrain
+            self.drivetrain
         )
 
     def registerNamedCommands(self):
@@ -62,6 +72,15 @@ class AutonomousSubsystem(Subsystem):
             ChassisSpeeds(speeds.vx, speeds.vy, -speeds.omega),
             feedforwards
         )
+        
+    def _getRobotRelativeSpeeds(self):
+        return self.drivetrain.getRobotRelativeSpeeds()
+
+    def _resetOdometry(self, pose):
+        self.drivetrain.resetOdometry(pose)
+
+    def _getPose(self):
+        return self.drivetrain.getPose()
 
     def shouldFlipPath(self):
         return self.drivetrain.getAlliance() == DriverStation.Alliance.kRed

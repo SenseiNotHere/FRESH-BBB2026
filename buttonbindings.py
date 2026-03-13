@@ -3,20 +3,21 @@ from wpilib import XboxController
 
 from commands import ResetXY, ResetSwerveFront, FollowShootHub
 from superstructure import RobotState
+from robotcontainer import RobotContainer
 
 
 class ButtonBindings:
-    def __init__(self, robot_container):
+    def __init__(self, robot_container: RobotContainer):
         """Initialize ButtonBindings with access to the robot container."""
         self.robotContainer = robot_container
 
         # Core subsystems
-        self.robotDrive = robot_container.robotDrive
+        self.drivetrain = robot_container.vroomvroom
         self.superstructure = robot_container.superstructure
-        self.driverController = robot_container.driverController
-        self.operatorController = robot_container.operatorController
-        self.limelight = robot_container.limelight
-        self.orchestra = robot_container.orchestra
+        self.driverController = robot_container.vroomvroomController
+        self.operatorController = robot_container.vroomvroomController
+        self.limelight = robot_container.lemon
+        self.orchestra = robot_container.orca
 
     # Main Binding Configuration
 
@@ -35,19 +36,19 @@ class ButtonBindings:
                 x=0.0,
                 y=0.0,
                 headingDegrees=0.0,
-                drivetrain=self.robotDrive,
+                drivetrain=self.drivetrain,
                 reason="pov(0)"
             )
         )
 
         # Reset Robot Front
         self.driverController.pov(180).onTrue(
-            ResetSwerveFront(self.robotDrive)
+            ResetSwerveFront(self.drivetrain)
         )
         
         # X-Break
         self.driverController.pov(270).whileTrue(
-            InstantCommand(self.robotDrive.setX, self.robotDrive)
+            InstantCommand(self.drivetrain.setX, self.drivetrain)
         )
 
         # Shooter
@@ -64,7 +65,7 @@ class ButtonBindings:
         self.driverController.button(
             XboxController.Button.kRightBumper
         ).whileTrue(
-            FollowShootHub(self.superstructure, self.robotDrive)
+            FollowShootHub(self.superstructure, self.drivetrain)
         )
 
     # Operator Controls

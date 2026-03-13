@@ -38,31 +38,31 @@ class ShiftNotifier:
 
         elapsed = Timer.getFPGATimestamp() - self.matchStartTime
 
-        # SHIFT 1 start (10s teleop)
-        if elapsed > 10 and not self._shift1_alert:
+        # SHIFT 1 ending in 5 seconds
+        if elapsed > 5 and not self._shift1_alert:
             self._notify("SHIFT 1")
             self._shift1_alert = True
 
-        # SHIFT 2 start
-        if elapsed > 35 and not self._shift2_alert:
+        # SHIFT 2 ending in 5 seconds
+        if elapsed > 30 and not self._shift2_alert:
             self._notify("SHIFT 2")
             self._shift2_alert = True
 
-        # SHIFT 3 start
-        if elapsed > 60 and not self._shift3_alert:
+        # SHIFT 3 ending in 5 seconds
+        if elapsed > 55 and not self._shift3_alert:
             self._notify("SHIFT 3")
             self._shift3_alert = True
 
-        # SHIFT 4 start
-        if elapsed > 85 and not self._shift4_alert:
+        # SHIFT 4 ending in 5 seconds
+        if elapsed > 80 and not self._shift4_alert:
             self._notify("SHIFT 4")
             self._shift4_alert = True
 
-        # ENDGAME
-        if elapsed > 110 and not self._endgame_alert:
+        # ENDGAME starting in 5 seconds
+        if elapsed > 105 and not self._endgame_alert:
             self._notify("ENDGAME")
             self._endgame_alert = True
-        
+    
         isAuto = DriverStation.isAutonomousEnabled()
         currentShift = ("AUTONOMOUS" if isAuto
         else "SHIFT 1" if (elapsed < 10 and not isAuto)
@@ -75,7 +75,7 @@ class ShiftNotifier:
         self._handle_rumble_timeout()
 
     def _notify(self, text):
-        log("Aux", "{text}")
+        log("Aux", f"{text}")
 
         if self.driverController is None:
             return

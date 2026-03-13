@@ -19,6 +19,10 @@ class SuperstructureHelpers:
         if self.hasIndexer:
             self.indexer.stop()
 
+    def _stop_intake_position(self: "Superstructure"):
+        if self.hasIntake:
+            self.intake.stop_deploy()
+
     def _stop_agitator(self: "Superstructure"):
         if self.hasAgitator:
             self.agitator.stop()
@@ -26,6 +30,46 @@ class SuperstructureHelpers:
     def _stop_orchestra(self: "Superstructure"):
         if self.hasOrchestra:
             self.orchestra.stop()
+
+    def _spin_up_shooters(self: "Superstructure"):
+        if not self.hasShooter and not self.hasShooter2:
+            return
+
+        target_rps = None
+        if self.hasShotCalc:
+            target_rps = self.shotCalculator.getTargetSpeedRPS()
+
+        if self.hasShooter:
+            if target_rps is not None:
+                self.shooter.setTargetRPS(target_rps)
+            else:
+                self.shooter.useDashboardPercent()
+
+        if self.hasShooter2:
+            if target_rps is not None:
+                self.shooter2.setTargetRPS(target_rps)
+            else:
+                self.shooter2.useDashboardPercent()
+
+    def _stop_feeders(self: "Superstructure"):
+        if self.hasIndexer:
+            self.indexer.stop()
+
+        if self.hasIndexer2:
+            self.indexer2.stop()
+
+        if self.hasAgitator:
+            self.agitator.stop()
+
+    def _feed_shooters(self: "Superstructure"):
+        if self.hasIndexer:
+            self.indexer.feed()
+
+        if self.hasIndexer2:
+            self.indexer2.feed()
+
+        if self.hasAgitator:
+            self.agitator.feed()
 
     def _handle_music_cleanup(self: "Superstructure"):
         if self.robot_state != RobotState.PLAYING_SONG and self.hasOrchestra:

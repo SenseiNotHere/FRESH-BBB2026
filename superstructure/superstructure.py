@@ -24,12 +24,16 @@ from constants.field_constants import *
 
 
 class Superstructure(SuperstructureStates, SuperstructureHelpers):
+    _instance = None
+
     def __init__(
             self,
             drivetrain: DriveSubsystem | None = None,
             intake: IntakeSubsystem | None = None,
             shooter: ShooterSubsystem | None = None,
+            shooter2: ShooterSubsystem | None = None,
             indexer: IndexerSubsystem | None = None,
+            indexer2: IndexerSubsystem | None = None,
             agitator: AgitatorSubsystem | None = None,
             shotCalculator: ShotCalculator | None = None,
             vision: LimelightCamera | None = None,
@@ -37,11 +41,52 @@ class Superstructure(SuperstructureStates, SuperstructureHelpers):
             driverController: CommandGenericHID | None = None,
             operatorController: CommandGenericHID | None = None,
     ):
+        """
+        Superstructure.
+
+        The Superstructure is the central coordination layer of the robot. It manages
+        high-level robot states and orchestrates interactions between subsystems such
+        as the drivetrain, intake, shooter, indexer, and agitator.
+
+        Instead of subsystems directly controlling each other, the Superstructure
+        defines robot-wide states (RobotState) and executes the appropriate subsystem
+        logic for each state. This keeps subsystem logic isolated while allowing the
+        robot to perform coordinated actions such as intaking, preparing a shot, and
+        shooting.
+
+        The Superstructure also tracks robot readiness conditions (RobotReadiness)
+        which are used to determine when actions such as feeding or shooting are safe.
+
+        This class is implemented as a single-instance subsystem and should be the
+        final subsystem initialized in `RobotContainer`. Its update loop must be called
+        periodically from `robotPeriodic()` to process state handlers and readiness
+        logic.
+
+        :param drivetrain: Drivetrain subsystem responsible for robot movement.
+        :param intake: Intake subsystem used for game piece collection and positioning.
+        :param shooter: Shooter subsystem responsible for spinning the shooter wheel.
+        :param indexer: Indexer subsystem used to feed game pieces toward the shooter.
+        :param agitator: Agitator subsystem used to assist with feeding game pieces.
+        :param shotCalculator: Shot calculation subsystem used to compute distance-based shooter speeds and aiming information.
+        :param vision: Limelight vision subsystem used for target tracking.
+        :param orchestra: Orchestra subsystem used for Phoenix motor music playback.
+        :param driverController: Driver controller used for driver feedback and auxiliary actions.
+        :param operatorController: Operator controller used for manual robot control.
+        """
+        super().__init__()
+        
+        # Single instance
+        if Superstructure._instance is not None:
+            raise RuntimeError("Only one instance of Superstructure is allowed.")
+        Superstructure._instance = self
+
         # Subsystems
         self.drivetrain = drivetrain
         self.intake = intake
         self.shooter = shooter
+        self.shooter2 = shooter2
         self.indexer = indexer
+        self.indexer2 = indexer2
         self.agitator = agitator
         self.vision = vision
         self.orchestra = orchestra
@@ -51,8 +96,10 @@ class Superstructure(SuperstructureStates, SuperstructureHelpers):
 
         # Subsystem availability flags
         self.hasShooter = self.shooter is not None
+        self.hasShooter2 = self.shooter2 is not None
         self.hasIntake = self.intake is not None
         self.hasIndexer = self.indexer is not None
+        self.hasIndexer2 = self.indexer2 is not None
         self.hasAgitator = self.agitator is not None
         self.hasShotCalc = self.shotCalculator is not None
         self.hasVision = self.vision is not None

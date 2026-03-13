@@ -25,7 +25,7 @@ class PointTowardsLocation(commands2.Command):
 
             # create a command for keeping the robot nose pointed towards the hub
             keepPointingTowardsHub = PointTowardsLocation(
-                drivetrain=self.robotDrive,
+                drivetrain=self.vroomvroom,
                 location=Translation2d(x=4.59, y=4.025),
                 locationIfRed=Translation2d(x=11.88, y=4.025),
             )

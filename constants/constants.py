@@ -205,6 +205,9 @@ class AutoConstants:
 class ShooterConstants:
 
     kShooterMotorID = 9
+    kShooterMotorInverted = True
+    kShooterMotor2ID = 0
+    kShooterMotor2Inverted = True
 
     kMinRPM = 600
     kMaxRPM = 4500
@@ -269,6 +272,9 @@ class IntakeConstants:
 class IndexerConstants:
 
     kIndexerMotorID = 2
+    kIndexerMotorInverted = True
+    kIndexer2MotorID = 1
+    kIndexer2MotorInverted = True
 
     kMaxRPS = 40.0
     kFeedRPS = 18.0
@@ -282,44 +288,3 @@ class AgitatorConstants:
 
     kMotorCANID = 3
     kMotorInverted = False
-
-class ClimberConstants:
-
-    kMotorID = 10
-    kMotorInverted = False
-    kCanCoderCANID = 5
-
-    kPneumaticsModuleType = PneumaticsModuleType.CTREPCM
-    kPCMID = 0
-    kForwardChannel = 2
-    kReverseChannel = 3
-
-    kMaxPosition = -0.002
-    kMinPosition = -1.999
-    kRisenHeight = -0.002
-    kClimbedHeight = -1.5
-    kHeightTolerance = 0.03
-    kPositionDeadband = 0.06
-    kVelocityDeadband = 0.0
-    kStallCurrent = 55.0
-    kStallTime = 0.3
-    kManualSpeed = 1.0  # rotations per second
-
-    kP = 20.0
-    kI = 0.0
-    kD = 0.0
-    kS = 2.4
-    kFF = 0.0
-    kG = 0.5 # Normal values 0.5->2.0
-
-    kVelocityP = 2.0
-
-    kStatorCurrentLimit = 60
-    kSupplyCurrentLimit = 40
-
-    kManualRPS = 3.0
-
-class TrenchAssistConstants:
-
-    kTrenchAssistEnabled = False
-    kTriggerDistance = 0.9

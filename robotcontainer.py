@@ -49,6 +49,22 @@ class RobotContainer:
     """
     The container for the robot. Subsystems are initialized here,
     button bindings are set up, and auto chooser is sent to the dashboard.
+    
+    Dictionary:
+        - self.vroomvroom = DriveSubsystem
+        - self.gulp = IntakeSubsystem
+        - self.pew = ShooterSubsystem
+        - self.pewpew = ShooterSubsystem 2
+        - self.calc = ShotCalculator
+        - self.slurp = IndexerSubsystem
+        - self.slurp2 = IndexerSubsystem 2
+        - self.lavadora = AgitatorSubsystem
+        - self.lemon = LimelightCamera
+        - self.limao = LimelightCamera 2
+        - self.orca = OrchestraSubsystem
+        - self.vroomvroomController = Driver Controller
+        - self.statesideController = Operator Controller
+        - self.megamente = Superstructure
     """
 
     def __init__(self, robot):
@@ -57,10 +73,10 @@ class RobotContainer:
 
         # Drive Subsystem
         log("RobotContainer","Initializing DriveSubsystem...")
-        self.robotDrive = DriveSubsystem()
+        self.vroomvroom = DriveSubsystem()
 
         if commands2.TimedCommandRobot.isSimulation():
-            self.robotDrive.simPhysics = BadSimPhysics(self.robotDrive, robot)
+            self.vroomvroom.simPhysics = BadSimPhysics(self.vroomvroom, robot)
 
         log("Robot Container", "DriveSubsystem Initialized!")
 
@@ -72,10 +88,10 @@ class RobotContainer:
 
         # Controllers
         log("Robot Container","Initializing Controllers...")
-        self.driverController = CommandGenericHID(
+        self.vroomvroomController = CommandGenericHID(
             OIConstants.kDriverControllerPort
         )
-        self.operatorController = CommandGenericHID(
+        self.statesideController = CommandGenericHID(
             OIConstants.kOperatorControllerPort
         )
         log("Robot Container","Controllers Initialized!")
@@ -83,27 +99,19 @@ class RobotContainer:
         # Vision / Localization
         log("Robot Container","Initializing Vision...")
         self.localizer = LimelightLocalizer(
-            drivetrain=self.robotDrive,
+            drivetrain=self.vroomvroom,
             flipIfRed=False,
         )
 
-        self.limelight = LimelightCamera("limelight-front")
-        self.limelight.setPiPMode(1)
+        self.lemon = LimelightCamera("limelight-front")
+        self.lemon.setPiPMode(1)
 
-        self.limelightBack = LimelightCamera("limelight-back")
+        self.limao = LimelightCamera("limelight-back")
 
         self.localizer.addCamera(
-            camera=self.limelight,
+            camera=self.lemon,
             cameraPoseOnRobot=Translation3d(-0.17, 0.0, 0.508),
             cameraHeadingOnRobot=Rotation2d.fromDegrees(180),
-            minPercentFrame=0.07,
-            maxRotationSpeed=720,
-        )
-
-        self.localizer.addCamera(
-            camera=self.limelightBack,
-            cameraPoseOnRobot=Translation3d(-0.17, -0.165, 0.406),
-            cameraHeadingOnRobot=Rotation2d.fromDegrees(270),
             minPercentFrame=0.07,
             maxRotationSpeed=720,
         )
@@ -112,16 +120,16 @@ class RobotContainer:
 
         # Default Drive Command
         log("Robot Container","Setting Default Drive Command...")
-        self.robotDrive.setDefaultCommand(
+        self.vroomvroom.setDefaultCommand(
             HolonomicDrive(
-                self.robotDrive,
-                forwardSpeed=lambda: -self.driverController.getRawAxis(
+                self.vroomvroom,
+                forwardSpeed=lambda: -self.vroomvroomController.getRawAxis(
                     XboxController.Axis.kLeftY
                 ),
-                leftSpeed=lambda: -self.driverController.getRawAxis(
+                leftSpeed=lambda: -self.vroomvroomController.getRawAxis(
                     XboxController.Axis.kLeftX
                 ),
-                rotationSpeed=lambda: self.driverController.getRawAxis(
+                rotationSpeed=lambda: self.vroomvroomController.getRawAxis(
                     XboxController.Axis.kRightX
                 ),
                 deadband=OIConstants.kDriveDeadband,
@@ -134,7 +142,7 @@ class RobotContainer:
 
         # Intake
         log("Robot Container","Initializing Intake...")
-        self.intake = IntakeSubsystem(
+        self.gulp = IntakeSubsystem(
             deployMotorCANID=IntakeConstants.kDeployMotorID,
             deployMotorInverted=IntakeConstants.kDeployMotorInverted,
             intakeMotorCANID=IntakeConstants.kIntakeMotorID,
@@ -142,40 +150,49 @@ class RobotContainer:
         )
         log("Robot Container","Intake Initialized!")
 
-        # Shooter
-        log("Robot Container","Initializing Shooter...")
-        self.shooter = ShooterSubsystem(
+        # Shooters
+        log("Robot Container","Initializing Shooters...")
+        self.pew = ShooterSubsystem(
             motorCANID=ShooterConstants.kShooterMotorID,
-            motorInverted=True,
+            motorInverted=ShooterConstants.kShooterMotorInverted,
         )
-        log("Robot Container","Shooter Initialized!")
+        self.pewpew = ShooterSubsystem(
+            motorCANID=ShooterConstants.kShooterMotor2ID,
+            motorInverted=ShooterConstants.kShooterMotor2Inverted,
+        )
+        
+        log("Robot Container","Shooters Initialized!")
 
         # Shot Calculator
         log("Robot Container","Initializing Shot Calculator...")
-        self.shotCalculator = ShotCalculator(
-            drivetrain=self.robotDrive
+        self.calc = ShotCalculator(
+            drivetrain=self.vroomvroom
         )
         log("Robot Container","Shot Calculator Initialized!")
 
-        # Indexer
-        log("Robot Container","Initializing Indexer...")
-        self.indexer = IndexerSubsystem(
+        # Indexers
+        log("Robot Container","Initializing Indexers...")
+        self.slurp1 = IndexerSubsystem(
             motorCANID=IndexerConstants.kIndexerMotorID,
-            motorInverted=True,
+            motorInverted=IndexerConstants.kIndexerMotorInverted
         )
-        log("Robot Container","Indexer Initialized!")
+        self.slurp2 = IndexerSubsystem(
+            motorCANID=IndexerConstants.kIndexer2MotorID,
+            motorInverted=IndexerConstants.kIndexer2MotorInverted
+        )
+        log("Robot Container","Indexers Initialized!")
 
         # Orchestra
         log("Robot Container","Initializing Orchestra...")
-        self.orchestra = OrchestraSubsystem(
-            self.robotDrive,
-            self.shooter,
+        self.orca = OrchestraSubsystem(
+            self.vroomvroom,
+            self.pew,
         )
         log("Robot Container","Orchestra Initialized!")
 
         # Agitator
         log("Robot Container","Initializing Agitator...")
-        self.agitator = AgitatorSubsystem(
+        self.lavadora = AgitatorSubsystem(
             motorCANID=AgitatorConstants.kMotorCANID,
             motorInverted=AgitatorConstants.kMotorInverted,
         )
@@ -183,23 +200,25 @@ class RobotContainer:
 
         # Superstructure (MUST BE LAST)
         log("Robot Container","Initializing Superstructure...")
-        self.superstructure = Superstructure(
-            drivetrain=self.robotDrive,
-            intake=self.intake,
-            shooter=self.shooter,
-            indexer=self.indexer,
-            agitator=self.agitator,
-            shotCalculator=self.shotCalculator,
-            vision=self.limelight,
-            orchestra=self.orchestra,
-            driverController=self.driverController,
-            operatorController=self.operatorController,
+        self.megamente = Superstructure(
+            drivetrain=self.vroomvroom,
+            intake=self.gulp,
+            shooter=self.pew,
+            shooter2=self.pewpew,
+            indexer=self.slurp1,
+            indexer2=self.slurp2,
+            agitator=self.lavadora,
+            shotCalculator=self.calc,
+            vision=self.lemon,
+            orchestra=self.orca,
+            driverController=self.vroomvroomController,
+            operatorController=self.statesideController,
         )
         log("Robot Container","Superstructure Initialized!")
 
         # Autonomous
         log("Robot Container","Initializing Autonomous...")
-        self.autonomousSubsystem = AutonomousSubsystem(self.robotDrive, self)
+        self.autonomousSubsystem = AutonomousSubsystem(self.vroomvroom, self)
 
         self.autoChooser = AutoBuilder.buildAutoChooser()
         SmartDashboard.putData("Auto Chooser", self.autoChooser)
@@ -220,10 +239,10 @@ class RobotContainer:
 
         if isFMSAttached:
             log("Robot Container","FMS is attached! Welcome to the competition field, team 1811!")
-            log("Robot Container","Bobby the B Box is ready to rock and roll!")
+            log("Robot Container","Bobby the B Box II is ready to rock and roll!")
         else:
             log("Robot Container","FMS is not attached! Running in practice mode.")
-            log("Robot Container","Bobby the B Box is alive!")
+            log("Robot Container","Bobby the B Box II is alive!")
 
             # Rest of Auto stuff
             self._lastPreviewedAuto = None

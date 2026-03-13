@@ -21,7 +21,6 @@ from constants.constants import IntakeConstants
 
 
 class IntakeSubsystem(Subsystem):
-
     def __init__(
         self,
         deployMotorCANID: int,
@@ -29,6 +28,22 @@ class IntakeSubsystem(Subsystem):
         intakeMotorCANID: int,
         intakeMotorInverted: bool
     ):
+        """
+        Intake Subsystem.
+
+        This subsystem controls the robot's intake mechanism using two motors and can be
+        instantiated multiple times if needed.
+
+        Hardware:
+        - Spark MAX: Controls the deploy position of the intake using built-in limit switches.
+        - TalonFX (Kraken X60): Drives the intake roller, providing the high torque required
+          to pull game pieces into the robot.
+
+        :param deployMotorCANID: CAN ID of the Spark MAX controlling the intake deploy mechanism.
+        :param deployMotorInverted: Whether the deploy motor (Spark MAX) is inverted.
+        :param intakeMotorCANID: CAN ID of the TalonFX controlling the intake roller.
+        :param intakeMotorInverted: Whether the intake roller motor (TalonFX) is inverted.
+        """
         super().__init__()
 
         # Deploy Motor (Spark MAX)
@@ -233,7 +248,12 @@ class IntakeSubsystem(Subsystem):
         )
 
         self._isDeployed = False
-
+        
+    def toggle_position(self):
+        if self._isDeployed:
+            self.stow()
+        else:
+            self.deploy()
 
     def stop_deploy(self):
         self._pulsePositionActive = False

@@ -15,8 +15,22 @@ from constants.constants import ShooterConstants
 
 
 class ShooterSubsystem(Subsystem):
-
     def __init__(self, motorCANID: int, motorInverted: bool):
+        """
+        Shooter Subsystem.
+
+        This subsystem controls the robot's shooter mechanism using a single Kraken X60
+        (TalonFX) motor. The motor is controlled in closed-loop velocity mode to achieve
+        a target shooter speed.
+
+        This subsystem can be instantiated multiple times if needed.
+
+        Hardware:
+        - TalonFX (Kraken X60) used to spin the shooter wheel.
+
+        :param motorCANID: CAN ID of the TalonFX controlling the shooter motor.
+        :param motorInverted: Whether the shooter motor is inverted.
+        """
         super().__init__()
 
         # Motor setup

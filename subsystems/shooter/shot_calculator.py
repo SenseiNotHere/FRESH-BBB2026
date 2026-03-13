@@ -11,10 +11,25 @@ from constants.constants import ShooterConstants
 
 class ShotCalculator(Subsystem):
     """
-    Computes distance-based shooter speed and yaw.
-    Does NOT control shooter. Pure calculation subsystem.
+    Shot Calculator Subsystem.
 
-    Credits to FRC Team 868 - TechHOUNDS
+    This subsystem performs all calculations required for distance-based shooting.
+    It determines the robot's distance to the target, calculates the required
+    shooter wheel speed, and computes the yaw angle needed to aim the robot.
+
+    The subsystem does not directly control any hardware. Instead, it provides
+    calculated values that other subsystems (such as the shooter and drivetrain)
+    can use for targeting and shooting logic.
+
+    Computed values include:
+    - Distance from the robot to the target
+    - Required shooter wheel speed (RPS) based on a distance lookup table
+    - Effective target pose used for aiming
+    - Yaw angle required for the robot to face the target
+
+    Credits to FRC Team 868 - TechHOUNDS for the original shot calculation concepts.
+
+    :param drivetrain: The drivetrain subsystem used to obtain the robot's current pose.
     """
 
     def __init__(self, drivetrain):

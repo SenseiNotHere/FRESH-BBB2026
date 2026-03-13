@@ -1,7 +1,6 @@
 from typing import TYPE_CHECKING
 from wpilib import Timer
 from .robot_state import RobotState
-from constants.constants import ClimberConstants
 
 if TYPE_CHECKING:
     from .superstructure import Superstructure
@@ -27,27 +26,15 @@ class SuperstructureStates:
         if self.hasIntake:
             self.intake.intake()
 
-    # Start prep shot on entry
     def _handle_prep_shot(self: "Superstructure"):
         """
         Handles the prep shot state by spinning up the shooter and waiting for it to be ready.
         """
-        # Spin up shooter
-        if self.hasShooter:
-            if self.hasShotCalc:
-                target_rps = self.shotCalculator.getTargetSpeedRPS()
-                self.shooter.setTargetRPS(target_rps)
-            else:
-                self.shooter.useDashboardPercent()
-
-        if self.hasIndexer:
-            self.indexer.stop()
-        if self.hasAgitator:
-            self.agitator.stop()
-
-        # Debounced transition to SHOOTING
+        self._spin_up_shooters()
+        self._stop_feeders()
+    
         now = Timer.getFPGATimestamp()
-
+    
         if self.robot_readiness.shooterReady:
             if self._shooter_ready_since is None:
                 self._shooter_ready_since = now
@@ -80,6 +67,11 @@ class SuperstructureStates:
                 self.indexer.stop()
             if self.hasAgitator:
                 self.agitator.stop()
+                
+        # Jam prevention
+        if self.hasIntake:
+            self.intake.pulse_position()
+            self.intake.pulse_intake()
 
 
     # Starts intake deployment/retraction on entry
@@ -90,11 +82,11 @@ class SuperstructureStates:
         if not self.hasIntake:
             return
 
-        # If intake isn't deployed, deploy it.
+        # Deploy intake
         if self.robot_state == RobotState.INTAKE_DEPLOYED:
             self.intake.deploy()
 
-        # If intake is deployed, retract it.
+        # Stow intake
         elif self.robot_state == RobotState.INTAKE_STOWED:
             self.intake.stow()
 

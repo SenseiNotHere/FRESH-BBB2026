@@ -8,14 +8,37 @@ from utils import log
 
 
 class OrchestraSubsystem(Subsystem):
-
+    _instance = None
+    
     def __init__(
         self,
         driveSubsystem,
         climberSubsystem: Optional[Subsystem] = None,
         shooterSubsystem: Optional[Subsystem] = None,
+        intakeSubsystem: Optional[Subsystem] = None,
     ):
+        """
+        Orchestra Subsystem.
+
+        This subsystem manages music playback on the robot's Kraken motors using the
+        Phoenix 6 Orchestra library. It gathers Kraken motors from other subsystems
+        and registers them as instruments for the orchestra.
+
+        This subsystem is intended to be a single instance.
+
+        Any subsystem containing Kraken motors can optionally be provided so their
+        motors can be included in the orchestra.
+
+        :param driveSubsystem: Drivetrain subsystem containing Kraken motors (optional).
+        :param climberSubsystem: Climber subsystem containing Kraken motors (optional).
+        :param shooterSubsystem: Shooter subsystem containing Kraken motors (optional).
+        :param intakeSubsystem: Intake subsystem containing Kraken motors (optional).
+        """
         super().__init__()
+
+        if OrchestraSubsystem._instance is not None:
+            raise RuntimeError("Only one instance of OrchestraSubsystem is allowed.")
+        OrchestraSubsystem._instance = self
 
         self._orchestra = Orchestra()
         self._current_song: Optional[str] = None

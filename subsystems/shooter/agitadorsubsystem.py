@@ -11,6 +11,18 @@ from rev import (
 
 class AgitatorSubsystem(Subsystem):
     def __init__(self, motorCANID: int, motorInverted: bool):
+        """
+        Agitator Subsystem.
+
+        This subsystem controls the agitator mechanism using a single motor.
+        It can be instantiated multiple times if needed.
+
+        Hardware:
+        - Spark MAX controlling a brushed motor used to drive the agitator.
+
+        :param motorCANID: CAN ID of the Spark MAX controlling the agitator motor.
+        :param motorInverted: Whether the agitator motor is inverted.
+        """
         super().__init__()
 
         self.motor = SparkMax(motorCANID, SparkLowLevel.MotorType.kBrushless)
