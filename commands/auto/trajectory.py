@@ -7,7 +7,6 @@
 from __future__ import annotations
 
 import typing
-from queue import SimpleQueue
 
 import commands2
 from commands2 import InstantCommand
