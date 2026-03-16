@@ -13,7 +13,6 @@ class OrchestraSubsystem(Subsystem):
     def __init__(
         self,
         driveSubsystem,
-        climberSubsystem: Optional[Subsystem] = None,
         shooterSubsystem: Optional[Subsystem] = None,
         intakeSubsystem: Optional[Subsystem] = None,
     ):
@@ -30,7 +29,6 @@ class OrchestraSubsystem(Subsystem):
         motors can be included in the orchestra.
 
         :param driveSubsystem: Drivetrain subsystem containing Kraken motors (optional).
-        :param climberSubsystem: Climber subsystem containing Kraken motors (optional).
         :param shooterSubsystem: Shooter subsystem containing Kraken motors (optional).
         :param intakeSubsystem: Intake subsystem containing Kraken motors (optional).
         """
@@ -50,7 +48,6 @@ class OrchestraSubsystem(Subsystem):
         # Register motors
         for subsystem in (
             driveSubsystem,
-            climberSubsystem,
             shooterSubsystem,
         ):
             if subsystem is None:

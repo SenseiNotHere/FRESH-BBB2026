@@ -3,19 +3,18 @@ from wpilib import XboxController
 
 from commands import ResetXY, ResetSwerveFront, FollowShootHub
 from superstructure import RobotState
-from robotcontainer import RobotContainer
 
 
 class ButtonBindings:
-    def __init__(self, robot_container: RobotContainer):
+    def __init__(self, robot_container):
         """Initialize ButtonBindings with access to the robot container."""
         self.robotContainer = robot_container
 
         # Core subsystems
         self.drivetrain = robot_container.vroomvroom
-        self.superstructure = robot_container.superstructure
+        self.superstructure = robot_container.megamente
         self.driverController = robot_container.vroomvroomController
-        self.operatorController = robot_container.vroomvroomController
+        self.operatorController = robot_container.statesideController
         self.limelight = robot_container.lemon
         self.orchestra = robot_container.orca
 

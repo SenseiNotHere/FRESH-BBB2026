@@ -1,6 +1,5 @@
 import math
 
-from wpilib import PneumaticsModuleType
 from wpimath import units
 from wpimath.geometry import Translation2d
 from wpimath.kinematics import SwerveDrive4Kinematics
@@ -221,20 +220,31 @@ class ShooterConstants:
     kShooterStatorLimit = 140
 
     DISTANCE_TO_RPS = InterpolatingMap()
-    DISTANCE_TO_RPS.insert(2.57, 3375 / 60) # In front of Tower
-    DISTANCE_TO_RPS.insert(3.0, 3465 / 60)
-    DISTANCE_TO_RPS.insert(3.2, 3510 / 60)
-    DISTANCE_TO_RPS.insert(3.35, 60)
-    DISTANCE_TO_RPS.insert(3.40, 3555 / 60)
-    DISTANCE_TO_RPS.insert(3.6, 3622.5 / 60)
-    DISTANCE_TO_RPS.insert(3.8, 3690 / 60)
-    DISTANCE_TO_RPS.insert(4.0, 3780  / 60)
-    DISTANCE_TO_RPS.insert(4.2, 3825 / 60)
-    DISTANCE_TO_RPS.insert(4.49, 63.75)
+    DISTANCE_TO_RPS.insert(2.57, 56.25)  # 3375 / 60
+    DISTANCE_TO_RPS.insert(3.0, 57.75)  # 3465 / 60
+    DISTANCE_TO_RPS.insert(3.2, 58.50)  # 3510 / 60
+    DISTANCE_TO_RPS.insert(3.35, 59.00)  # 3540 / 60 - NEEDS RETUNING
+    DISTANCE_TO_RPS.insert(3.40, 59.25)  # 3555 / 60
+    DISTANCE_TO_RPS.insert(3.6, 60.375)  # 3622.5 / 60
+    DISTANCE_TO_RPS.insert(3.8, 61.50)  # 3690 / 60
+    DISTANCE_TO_RPS.insert(4.0, 63.00)  # 3780 / 60
+    DISTANCE_TO_RPS.insert(4.2, 63.75)  # 3825 / 60
+    DISTANCE_TO_RPS.insert(4.49, 63.75)  # NEEDS RETUNING
+
+    # DISTANCE_TO_RPS.insert(X.XX, 0.0)  # minimum distance - find this first!
+    # DISTANCE_TO_RPS.insert(2.0, 0.0)
+    # DISTANCE_TO_RPS.insert(2.5, 0.0)
+    # DISTANCE_TO_RPS.insert(3.0, 0.0)
+    # DISTANCE_TO_RPS.insert(3.5, 0.0)
+    # DISTANCE_TO_RPS.insert(4.0, 0.0)
+    # DISTANCE_TO_RPS.insert(4.5, 0.0)
+    # DISTANCE_TO_RPS.insert(5.0, 0.0)
+    # DISTANCE_TO_RPS.insert(5.5, 0.0)
+    # DISTANCE_TO_RPS.insert(X.XX, 0.0)  # maximum distance - find this too!x
 
 class IntakeConstants:
-    kDeployMotorID = 0
-    kIntakeMotorID = 0
+    kDeployMotorID = 1
+    kIntakeMotorID = 11
 
     kIntakeMotorInverted = False
     kDeployMotorInverted = False
@@ -273,8 +283,6 @@ class IndexerConstants:
 
     kIndexerMotorID = 2
     kIndexerMotorInverted = True
-    kIndexer2MotorID = 1
-    kIndexer2MotorInverted = True
 
     kMaxRPS = 40.0
     kFeedRPS = 18.0
@@ -286,5 +294,7 @@ class IndexerConstants:
 
 class AgitatorConstants:
 
-    kMotorCANID = 3
+    kMotorCANID = 4
     kMotorInverted = False
+    kMotor2CANID = 10
+    kMotor2Inverted = False

@@ -1,0 +1,18 @@
+SparkMax
+1 - Deploy Motor
+2 - Indexer Motor
+4 - Agitator Motor
+5 - Agitator Motor 2
+
+TalonFX
+1 - Back Left Driving
+2 - Back Left Turning
+3 - Back Right Driving
+4 - Back Right Turning
+5 - Front Right Driving
+6 - Front Right Turning
+7 - Front Left Driving
+8 - Front Left Turning
+9 - Shooter Motor
+10 - Shooter Motor 2
+11 - Intake Motor

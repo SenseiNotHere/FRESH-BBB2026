@@ -22,6 +22,8 @@ from .superstructure_states import SuperstructureStates
 from constants.constants import *
 from constants.field_constants import *
 
+from utils import log
+
 
 class Superstructure(SuperstructureStates, SuperstructureHelpers):
     _instance = None
@@ -33,7 +35,6 @@ class Superstructure(SuperstructureStates, SuperstructureHelpers):
             shooter: ShooterSubsystem | None = None,
             shooter2: ShooterSubsystem | None = None,
             indexer: IndexerSubsystem | None = None,
-            indexer2: IndexerSubsystem | None = None,
             agitator: AgitatorSubsystem | None = None,
             shotCalculator: ShotCalculator | None = None,
             vision: LimelightCamera | None = None,
@@ -70,8 +71,8 @@ class Superstructure(SuperstructureStates, SuperstructureHelpers):
         :param shotCalculator: Shot calculation subsystem used to compute distance-based shooter speeds and aiming information.
         :param vision: Limelight vision subsystem used for target tracking.
         :param orchestra: Orchestra subsystem used for Phoenix motor music playback.
-        :param driverController: Driver controller used for driver feedback and auxiliary actions.
-        :param operatorController: Operator controller used for manual robot control.
+        :param driverController: Driver controller used.
+        :param operatorController: Operator controller used.
         """
         super().__init__()
         
@@ -86,7 +87,6 @@ class Superstructure(SuperstructureStates, SuperstructureHelpers):
         self.shooter = shooter
         self.shooter2 = shooter2
         self.indexer = indexer
-        self.indexer2 = indexer2
         self.agitator = agitator
         self.vision = vision
         self.orchestra = orchestra
@@ -99,13 +99,13 @@ class Superstructure(SuperstructureStates, SuperstructureHelpers):
         self.hasShooter2 = self.shooter2 is not None
         self.hasIntake = self.intake is not None
         self.hasIndexer = self.indexer is not None
-        self.hasIndexer2 = self.indexer2 is not None
         self.hasAgitator = self.agitator is not None
         self.hasShotCalc = self.shotCalculator is not None
         self.hasVision = self.vision is not None
         self.hasOrchestra = self.orchestra is not None
         self.hasDriverController = self.driverController is not None
         self.hasOperatorController = self.operatorController is not None
+        # No flags for drivetrain cause without any of these, there's no robot :O
 
         # State tracking
         self.robot_state = RobotState.IDLE
@@ -221,7 +221,7 @@ class Superstructure(SuperstructureStates, SuperstructureHelpers):
 
     def autoCreateStateCommand(self, state: RobotState):
         def on_init():
-            print(f"AUTO COMMAND TRIGGERED -> {state}")
+            log("Superstructure", f"AUTO COMMAND TRIGGERED -> {state}")
             self.setState(state)
 
         return FunctionalCommand(
@@ -252,7 +252,7 @@ class Superstructure(SuperstructureStates, SuperstructureHelpers):
         # Reset shooter-ready
         self._shooter_ready_since = None
 
-        print(f"[Superstructure] {oldState.name} -> {newState.name}")
+        log("Superstructure", f"{oldState.name} -> {newState.name}")
 
         SmartDashboard.putString("Superstructure/State", newState.name)
 

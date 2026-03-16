@@ -6,7 +6,6 @@ import typing
 import wpilib
 
 from commands2 import Subsystem
-from numpy.ma.core import angle
 from wpimath.filter import SlewRateLimiter
 from wpimath.geometry import (
     Pose2d,

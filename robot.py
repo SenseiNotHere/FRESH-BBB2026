@@ -62,7 +62,7 @@ class MyRobot(TimedCommandRobot):
 
     def robotPeriodic(self) -> None:
         super().robotPeriodic()  # runs scheduler
-        self.robotContainer.superstructure.update()
+        self.robotContainer.megamente.update()
 
     def testInit(self) -> None:
         # Cancels all running subsystems at the start of test mode

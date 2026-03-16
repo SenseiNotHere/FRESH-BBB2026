@@ -51,7 +51,7 @@ class NavxGyro(Subsystem):
 
 
     def get_yaw(self) -> Signal:
-        """Returns the heading of the gyro, in degrees, tries to be smart when gyro is disconnected
+        """Returns the heading of tbhe gyro, in degrees, tries to be smart when gyro is disconnected
 
         :returns: Z axis heading as degrees
         """

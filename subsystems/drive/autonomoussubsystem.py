@@ -38,6 +38,7 @@ class AutonomousSubsystem(Subsystem):
 
         self.drivetrain = drivetrain
         self.robotContainer = robotContainer
+        self.superstructure = robotContainer.megamente
 
         # Register commands and event triggers
         self.registerNamedCommands()
@@ -58,14 +59,14 @@ class AutonomousSubsystem(Subsystem):
         )
 
     def registerNamedCommands(self):
-        NamedCommands.registerCommand('PREP_SHOT', self.robotContainer.superstructure.createStateCommand(RobotState.PREP_SHOT))
-        NamedCommands.registerCommand('INTAKING', self.robotContainer.superstructure.createStateCommand(RobotState.INTAKING))
-        NamedCommands.registerCommand('INTAKE_DEPLOYED', self.robotContainer.superstructure.createStateCommand(RobotState.INTAKE_DEPLOYED))
-        NamedCommands.registerCommand('INTAKE_STOWED', self.robotContainer.superstructure.createStateCommand(RobotState.INTAKE_STOWED))
+        NamedCommands.registerCommand('PREP_SHOT', self.superstructure.createStateCommand(RobotState.PREP_SHOT))
+        NamedCommands.registerCommand('INTAKING', self.superstructure.createStateCommand(RobotState.INTAKING))
+        NamedCommands.registerCommand('INTAKE_DEPLOYED', self.superstructure.createStateCommand(RobotState.INTAKE_DEPLOYED))
+        NamedCommands.registerCommand('INTAKE_STOWED', self.superstructure.createStateCommand(RobotState.INTAKE_STOWED))
 
     def registerEventTriggers(self):
-        EventTrigger('INTAKE_DEPLOYED').whileTrue(self.robotContainer.superstructure.createStateCommand(RobotState.INTAKE_DEPLOYED))
-        EventTrigger('INTAKE_STOWED').whileTrue(self.robotContainer.superstructure.createStateCommand(RobotState.INTAKE_STOWED))
+        EventTrigger('INTAKE_DEPLOYED').whileTrue(self.superstructure.createStateCommand(RobotState.INTAKE_DEPLOYED))
+        EventTrigger('INTAKE_STOWED').whileTrue(self.superstructure.createStateCommand(RobotState.INTAKE_STOWED))
 
     def _driveRobotRelative(self, speeds, feedforwards):
         self.drivetrain.driveRobotRelativeChassisSpeeds(
@@ -82,7 +83,9 @@ class AutonomousSubsystem(Subsystem):
     def _getPose(self):
         return self.drivetrain.getPose()
 
-    def shouldFlipPath(self):
+    def shouldFlipPath(self) -> bool:
+        if self.drivetrain.getAlliance() is None:
+            return False
         return self.drivetrain.getAlliance() == DriverStation.Alliance.kRed
 
     def drawAuto(self, autoName: str):

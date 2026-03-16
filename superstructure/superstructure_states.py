@@ -32,9 +32,10 @@ class SuperstructureStates:
         """
         self._spin_up_shooters()
         self._stop_feeders()
-    
+
+        # Debounced transition to SHOOTING
         now = Timer.getFPGATimestamp()
-    
+
         if self.robot_readiness.shooterReady:
             if self._shooter_ready_since is None:
                 self._shooter_ready_since = now
@@ -46,33 +47,19 @@ class SuperstructureStates:
     # Start shooting on entry
     def _handle_shooting(self: "Superstructure"):
         """
-        Handles the shooting state by spinning up the shooter and starting the indexer and agitator.
+        Handles the shooting state by spinning up the shooter and starting the indexers and agitator.
         """
-        # Keep spinning
-        if self.hasShooter:
-            if self.hasShotCalc:
-                target_rps = self.shotCalculator.getTargetSpeedRPS()
-                self.shooter.setTargetRPS(target_rps)
-            else:
-                self.shooter.useDashboardPercent()
+        self._spin_up_shooters()
 
-        # Feed ONLY when ready
         if self.robot_readiness.canFeed:
-            if self.hasIndexer:
-                self.indexer.feed()
-            if self.hasAgitator:
-                self.agitator.feed()
+            self._feed_shooters()
         else:
-            if self.hasIndexer:
-                self.indexer.stop()
-            if self.hasAgitator:
-                self.agitator.stop()
-                
+            self._stop_feeders()
+
         # Jam prevention
         if self.hasIntake:
             self.intake.pulse_position()
             self.intake.pulse_intake()
-
 
     # Starts intake deployment/retraction on entry
     def _handle_intake_position(self: "Superstructure"):
@@ -93,26 +80,21 @@ class SuperstructureStates:
         # Go to IDLE after done.
         self.setState(RobotState.IDLE)
 
-    # Starts intake and shooter on entry, when shooterReady start indexer and agitator
+    # Starts intake and shooter on entry, when shooterReady start indexers and agitator
     def _handle_passing_fuel(self: "Superstructure"):
         """
-        Handles the event of passing fuel by starting the Intake, then starting the Shooter (as in PREP_SHOT).
-        Indexer and Agitator start running after the shooter is ready.
+        Handles passing fuel by running intake, spinning up shooters from dashboard percent,
+        and feeding only once the shooter path is ready.
         """
-        # Start intake.
         if self.hasIntake:
             self.intake.intake()
 
-        # Start shooter.
-        if self.hasShooter:
-            self.shooter.useDashboardPercent()
+        self._spin_up_shooters_dashboard()
 
-        # Start indexer and agitator when shooter is ready.
         if self.robot_readiness.shooterReady:
-            if self.hasIndexer:
-                self.indexer.feed()
-            if self.hasAgitator:
-                self.agitator.feed()
+            self._feed_shooters()
+        else:
+            self._stop_feeders()
 
     # Start song on entry
     def _handle_playing_song(self: "Superstructure"):

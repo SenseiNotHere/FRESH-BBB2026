@@ -185,21 +185,21 @@ Architecture first.
 Results follow.
 
 
-# ⚙ Hardware Overview
+# ⚙ Subsystem Overview
 
 ## 🔄 Drivetrain - Kraken Swerve
 
 Located in `subsystems/drive/`
 
-- Drive Motors: Kraken X60  
-- Steer Motors: Kraken X44  
-- Holonomic swerve drive  
-- Field-relative control  
-- Vision-assisted alignment  
-- Integrated scoring states  
+- Drive Motors: Kraken X60
+- Steer Motors: Kraken X44
+- Holonomic swerve drive
+- Field-relative control
+- Pose / odometry support
+- Vision-assisted alignment
 
-Yes, it’s fast.  
-Yes, it tracks.  
+Yes, it's fast.
+Yes, it tracks.
 Yes, it behaves.
 
 ---
@@ -208,14 +208,13 @@ Yes, it behaves.
 
 Located in `subsystems/shooter/`
 
-- Shooter Motor: Kraken X60  
-- Closed-loop velocity control  
-- State-gated firing  
-- Coordinated indexing  
-- Vision-aware prep
+- Shooter Motors: Kraken X60
+- Closed-loop velocity control
+- Superstructure-coordinated spin-up
+- Readiness-based firing logic
 
-We don’t just press shoot and pray.  
-The robot confirms it’s ready.
+We don't just press shoot and pray.
+The robot confirms it's ready.
 
 ---
 
@@ -223,9 +222,10 @@ The robot confirms it’s ready.
 
 Located in `subsystems/shooter/`
 
-- Motor: Brushed motor via SparkMax  
-- Controlled by superstructure  
-- Only feeds when shooter conditions are met  
+- Motor: Brushless motor via Spark MAX
+- Velocity-controlled feed/reverse behavior
+- Controlled by superstructure
+- Only feeds when shooter conditions are met
 
 No panic feeding. No chaos cycling.
 
@@ -235,8 +235,9 @@ No panic feeding. No chaos cycling.
 
 Located in `subsystems/shooter/`
 
-- Motor: NEO Brushless motor via SparkMax
-- Runs when Indexer is running
+- Motor: NEO Brushless motor via Spark MAX
+- Supports feed, reverse, and oscillation behavior
+- Used to keep game pieces moving cleanly through the system
 
 It shakey-shakey, we like it when it shakey-shakey.
 
@@ -246,12 +247,14 @@ It shakey-shakey, we like it when it shakey-shakey.
 
 Located in `subsystems/intake/`
 
-- Motors: NEO Brushless motor via SparkMax, and KrakenX60
-- NEO for deploying/stowing and KrakenX60 for intaking
-- Auto-integrated  
+- Deploy motor: NEO Brushless motor via Spark MAX
+- Roller motor: Kraken X60
+- Homing with limit switches
+- Deploy / stow control
+- Pulse behaviors for intake and position
 
-It deploys when it should.  
-It retracts when it should.  
+It deploys when it should.
+It retracts when it should.
 Ground intake energy handled.
 
 ---
@@ -260,22 +263,38 @@ Ground intake energy handled.
 
 Located in `subsystems/vision/`
 
-- Limelight  
-- AprilTag localization  
-- Drivetrain-following states  
-- Target-aware scoring logic  
+- Limelight-based targeting
+- AprilTag localization support
+- Pipeline switching
+- Camera heartbeat / detection monitoring
+- Target-aware scoring support
 
-Vision is baked into decision-making.  
+Vision is baked into decision-making.
 It is NOT a side feature.
+
+---
+
+## 🎵 Orchestra
+
+Located in `subsystems/orchestra/`
+
+- Phoenix 6 Orchestra integration
+- Uses registered Kraken motors as instruments
+- Dashboard song selection
+- CHRP playback support
+
+Yes, the robot can sing.
+Yes, that is a feature.
+No, we will not apologize.
 
 ---
 
 # 🤖 Autonomous
 
-- PathPlanner integration (`deploy/pathplanner/`)  
-- Shared superstructure logic  
-- Autonomous-specific states  
-- Behavior-based sequencing  
+- PathPlanner integration (`deploy/pathplanner/`)
+- Dashboard auto selection
+- Shared superstructure logic
+- Behavior-based sequencing
 
 Auto runs on the same brain as teleop.
 
@@ -285,15 +304,17 @@ Consistency >>> copy-paste command stacks.
 
 # 🛠 Tech Stack
 
-- Python 3.11+  
-- RobotPy + WPILib  
-- Phoenix 6  
-- REV SparkMax  
-- PathPlanner  
-- Limelight  
+- Python 3.14+
+- RobotPy + WPILib
+- Commands v2
+- Phoenix 6
+- REV
+- PathPlanner
+- Limelight
+- navX
 
-Yes, we use Phoenix Pro.  
-Yes, we know what we’re doing.
+Yes, we use Phoenix Pro.
+Yes, we know what we're doing.
 
 ---
 
@@ -364,13 +385,26 @@ We are not debugging your licensing.
 ## 1. Create a virtual environment
 
     python -m venv .venv
+
+Then activate it:
+
+**Windows (PowerShell):**
+
     .\.venv\Scripts\Activate.ps1
+
+**Windows (Command Prompt):**
+
+    .\.venv\Scripts\activate.bat
+
+**macOS/Linux:**
+
+    source .venv/bin/activate
 
 ## 2. Install dependencies
 
     pip install -r requirements.txt
 
-## 3. Sync dependencies
+## 3. Sync RobotPy dependencies
 
     robotpy sync
 
@@ -400,6 +434,8 @@ Follow RobotPy + WPILib documentation for deployment instructions.
     requirements.txt
     robot.py
     robotcontainer.py
+    buttonbindings.py
+    CANIDs.txt
     commands/
     constants/
     deploy/
@@ -410,15 +446,15 @@ Follow RobotPy + WPILib documentation for deployment instructions.
 
 ---
 
-# 🎵 Orchestra
+# 🎵 Music / CHRPs
 
 CHRPs are in:
 
     deploy/files
 
-Yes, the robot can sing.  
-Yes, it likely will be Ariana Grande.  
-Yes, that’s intentional.
+Yes, the robot can sing.
+Yes, it likely will be Ariana Grande.
+Yes, that's intentional.
 
 ---
 
@@ -443,14 +479,17 @@ We build systems here. Not shortcuts.
 
 ## 🗂 Organization Rules
 
-- `subsystems/` -> Hardware logic  
-- `commands/` -> Behaviors  
+- `subsystems/` -> Hardware logic (organized into: drive, intake, shooter, vision, orchestra)
+- `commands/` -> Behaviors and command flows (organized by subsystem)
 - `superstructure/` -> Robot intent coordination (divided into:)
     - `superstructure.py`: Main state machine & API
     - `superstructure_states.py`: Robot behavior state handlers
     - `superstructure_helpers.py`: Utility & helper functions
-- `constants/` -> Tunable values  
-- `utils/` -> Helper tools  
+    - `robot_state.py`: State definitions and readiness data
+    - `auxiliary_actions.py`: Supporting actions
+- `constants/` -> Tunable values (constants.py, field_constants.py)
+- `deploy/` -> PathPlanner assets and CHRP files
+- `utils/` -> Helper tools
 
 If it feels like a hack, it probably is.
 

@@ -57,7 +57,6 @@ class RobotContainer:
         - self.pewpew = ShooterSubsystem 2
         - self.calc = ShotCalculator
         - self.slurp = IndexerSubsystem
-        - self.slurp2 = IndexerSubsystem 2
         - self.lavadora = AgitatorSubsystem
         - self.lemon = LimelightCamera
         - self.limao = LimelightCamera 2
@@ -170,17 +169,13 @@ class RobotContainer:
         )
         log("Robot Container","Shot Calculator Initialized!")
 
-        # Indexers
-        log("Robot Container","Initializing Indexers...")
-        self.slurp1 = IndexerSubsystem(
+        # Indexer
+        log("Robot Container","Initializing Indexer...")
+        self.slurp = IndexerSubsystem(
             motorCANID=IndexerConstants.kIndexerMotorID,
             motorInverted=IndexerConstants.kIndexerMotorInverted
         )
-        self.slurp2 = IndexerSubsystem(
-            motorCANID=IndexerConstants.kIndexer2MotorID,
-            motorInverted=IndexerConstants.kIndexer2MotorInverted
-        )
-        log("Robot Container","Indexers Initialized!")
+        log("Robot Container","Indexer Initialized!")
 
         # Orchestra
         log("Robot Container","Initializing Orchestra...")
@@ -195,6 +190,8 @@ class RobotContainer:
         self.lavadora = AgitatorSubsystem(
             motorCANID=AgitatorConstants.kMotorCANID,
             motorInverted=AgitatorConstants.kMotorInverted,
+            motor2CANID=AgitatorConstants.kMotor2CANID,
+            motor2Inverted=AgitatorConstants.kMotor2Inverted,
         )
         log("Robot Container", "Agitator Initialized!")
 
@@ -205,8 +202,7 @@ class RobotContainer:
             intake=self.gulp,
             shooter=self.pew,
             shooter2=self.pewpew,
-            indexer=self.slurp1,
-            indexer2=self.slurp2,
+            indexer=self.slurp,
             agitator=self.lavadora,
             shotCalculator=self.calc,
             vision=self.lemon,
@@ -251,7 +247,7 @@ class RobotContainer:
         selected = self.autoChooser.getSelected()
 
         if selected != self._lastPreviewedAuto:
-            self.autonomousSubsystem.drawAuto(selected)
+            self.autonomousSubsystem.drawAuto(selected.getName())
             self._lastPreviewedAuto = selected
 
     # Autonomous

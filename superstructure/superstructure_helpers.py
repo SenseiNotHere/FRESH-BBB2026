@@ -55,18 +55,18 @@ class SuperstructureHelpers:
         if self.hasIndexer:
             self.indexer.stop()
 
-        if self.hasIndexer2:
-            self.indexer2.stop()
-
         if self.hasAgitator:
             self.agitator.stop()
+
+    def _spin_up_shooters_dashboard(self: "Superstructure"):
+        if self.hasShooter:
+            self.shooter.useDashboardPercent()
+        if self.hasShooter2:
+            self.shooter2.useDashboardPercent()
 
     def _feed_shooters(self: "Superstructure"):
         if self.hasIndexer:
             self.indexer.feed()
-
-        if self.hasIndexer2:
-            self.indexer2.feed()
 
         if self.hasAgitator:
             self.agitator.feed()
