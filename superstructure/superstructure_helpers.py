@@ -10,6 +10,8 @@ class SuperstructureHelpers:
     def _stop_shooter(self: "Superstructure"):
         if self.hasShooter:
             self.shooter.stop()
+        if self.hasShooter2:
+            self.shooter2.stop()
 
     def _stop_intake(self: "Superstructure"):
         if self.hasIntake:

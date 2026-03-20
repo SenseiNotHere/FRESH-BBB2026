@@ -17,8 +17,8 @@ from phoenix6.signals import (
     InvertedValue,
     SensorDirectionValue,
 )
-from phoenix6.controls import VelocityVoltage, PositionVoltage, MotionMagicVelocityVoltage
-from constants.constants import ModuleConstants
+from phoenix6.controls import VelocityVoltage, PositionVoltage, VelocityTorqueCurrentFOC, MotionMagicTorqueCurrentFOC
+from constants import ModuleConstants
 
 
 class PhoenixSwerveModuleSubsystem(Subsystem):
@@ -104,6 +104,9 @@ class PhoenixSwerveModuleSubsystem(Subsystem):
             if turnMotorInverted
             else InvertedValue.COUNTER_CLOCKWISE_POSITIVE
         )
+        turnConfig.motion_magic.motion_magic_cruise_velocity = ModuleConstants.kTurningMMCruiseVelocity
+        turnConfig.motion_magic.motion_magic_acceleration = ModuleConstants.kTurningMMAcceleration
+        turnConfig.motion_magic.motion_magic_jerk = ModuleConstants.kTurningMMJerk
         self.turningMotor.configurator.apply(turnConfig)
 
         turnSlot = Slot0Configs()
@@ -140,9 +143,10 @@ class PhoenixSwerveModuleSubsystem(Subsystem):
         self.turningMotor.configurator.apply(turnLimits)
 
         # Control Requests
-        motionMagicVV = MotionMagicVelocityVoltage(0, acceleration=ModuleConstants.kMagicMotionAcceleration)
-        self.velocityRequest = motionMagicVV.with_slot(0).with_enable_foc(True)
-        self.positionRequest = PositionVoltage(0).with_slot(0)
+        velocityVoltageFOC = VelocityTorqueCurrentFOC(0, acceleration=ModuleConstants.kDriveAcceleration)
+        self.velocityRequest = velocityVoltageFOC.with_slot(0)
+        motionMagicPositonFOC = MotionMagicTorqueCurrentFOC(0)
+        self.positionRequest = motionMagicPositonFOC.with_slot(0)
 
         # Init State
         self.resetEncoders()

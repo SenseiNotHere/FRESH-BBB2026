@@ -1,7 +1,7 @@
 from commands2 import InstantCommand
 from wpilib import XboxController
 
-from commands import ResetXY, ResetSwerveFront, FollowShootHub
+from commands import ResetXY, ResetSwerveFront, FollowShootHub, ToggleIntakePositionCommand
 from superstructure import RobotState
 
 
@@ -61,11 +61,11 @@ class ButtonBindings:
 
         # Follow Shoot Hub
         # Right Bumper = Follow Shoot Hub
-        self.driverController.button(
-            XboxController.Button.kRightBumper
-        ).whileTrue(
-            FollowShootHub(self.superstructure, self.drivetrain)
-        )
+#        self.driverController.button(
+#            XboxController.Button.kRightBumper
+#        ).whileTrue(
+#            FollowShootHub(self.superstructure, self.drivetrain)
+#        )
 
     # Operator Controls
 
@@ -77,4 +77,19 @@ class ButtonBindings:
             threshold=0.05
         ).whileTrue(
             self.superstructure.createStateCommand(RobotState.INTAKING)
+        )
+
+        # Left Trigger = Deploy / Stow Intake
+        self.operatorController.axisGreaterThan(
+            XboxController.Axis.kLeftTrigger,
+            threshold=0.05
+        ).whileTrue(
+            ToggleIntakePositionCommand(self.superstructure)
+        )
+        
+        # A Button = Play Song
+        self.operatorController.button(
+            XboxController.Button.kA
+        ).whileTrue(
+            self.superstructure.createStateCommand(RobotState.PLAYING_SONG)
         )

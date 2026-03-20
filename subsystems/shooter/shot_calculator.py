@@ -5,8 +5,8 @@ from commands2 import Subsystem
 from wpilib import SmartDashboard
 from wpimath.geometry import Pose2d, Pose3d, Translation2d, Rotation2d
 
-from constants.field_constants import Hub, getHubPose
-from constants.constants import ShooterConstants
+from constants import Hub, getHubPose
+from constants import ShooterConstants
 
 
 class ShotCalculator(Subsystem):

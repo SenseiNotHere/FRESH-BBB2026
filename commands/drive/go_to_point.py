@@ -13,7 +13,7 @@ from wpimath.geometry import Rotation2d, Translation2d
 from wpilib import SmartDashboard
 
 from commands import AimToDirectionConstants
-from constants.constants import AutoConstants, KrakenX60
+from constants import AutoConstants, KrakenX60
 
 class GoToPointConstants:
     kPTranslate = 0.25 / (KrakenX60.kMaxSpeedMetersPerSecond / 4.7)

@@ -1,7 +1,7 @@
 from commands2 import Subsystem
 
 from phoenix6.hardware import TalonFX
-from phoenix6.controls import VelocityVoltage
+from phoenix6.controls import VelocityVoltage, NeutralOut
 from phoenix6.configs import (
     TalonFXConfiguration,
     Slot0Configs,
@@ -11,7 +11,7 @@ from phoenix6.signals import NeutralModeValue, InvertedValue
 
 from wpilib import SmartDashboard, SendableChooser
 
-from constants.constants import ShooterConstants
+from constants import ShooterConstants
 
 
 class ShooterSubsystem(Subsystem):
@@ -67,6 +67,7 @@ class ShooterSubsystem(Subsystem):
         self.motor.configurator.apply(currentLimits)
 
         self.velocityRequest = VelocityVoltage(0.0).with_slot(0)
+        self.neutralRequest = NeutralOut()
 
         # State
 
@@ -81,9 +82,7 @@ class ShooterSubsystem(Subsystem):
     def periodic(self):
 
         if self._targetRPS is None:
-            self.motor.set_control(
-                self.velocityRequest.with_velocity(0.0)
-            )
+            self.motor.set_control(self.neutralRequest)
         else:
             self.motor.set_control(
                 self.velocityRequest.with_velocity(self._targetRPS)

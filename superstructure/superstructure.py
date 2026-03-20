@@ -19,8 +19,8 @@ from .auxiliary_actions import AuxiliaryActions
 from .superstructure_helpers import SuperstructureHelpers
 from .superstructure_states import SuperstructureStates
 
-from constants.constants import *
-from constants.field_constants import *
+from constants import *
+from constants import *
 
 from utils import log
 
@@ -179,7 +179,7 @@ class Superstructure(SuperstructureStates, SuperstructureHelpers):
         # Shooter
         shooter_ready = False
         if self.hasShooter:
-            shooter_ready = self.shooter.atSpeed(tolerance_rpm=100)
+            shooter_ready = self.shooter.atSpeed(tolerance_rpm=50)
 
         self.robot_readiness.shooterReady = shooter_ready
 
@@ -215,7 +215,7 @@ class Superstructure(SuperstructureStates, SuperstructureHelpers):
         return FunctionalCommand(
             onInit=lambda: self.setState(state),
             onExecute=lambda: None,
-            onEnd=on_end,
+            onEnd=lambda interrupted: self.setState(RobotState.IDLE),
             isFinished=lambda: finishImmediately
         )
 

@@ -9,7 +9,7 @@ from rev import (
 )
 from wpilib import SmartDashboard, SendableChooser
 
-from constants.constants import IndexerConstants
+from constants import IndexerConstants
 
 
 class IndexerSubsystem(Subsystem):
@@ -54,6 +54,7 @@ class IndexerSubsystem(Subsystem):
 
         # Internal state
         self._targetRPM: float | None = None
+        self._lastCommandedRPM: float | None = None  # track last sent command
 
         # Optional speed chooser (disabled by default)
         speedChooserEnabled = False
@@ -71,16 +72,14 @@ class IndexerSubsystem(Subsystem):
     # Periodic
 
     def periodic(self):
-
         if self._targetRPM is None:
-            # Ensure motor fully stopped
             self.motor.set(0.0)
         else:
-            # Always re-command velocity
             self.pid.setReference(
                 self._targetRPM,
                 SparkBase.ControlType.kVelocity
             )
+        self._lastCommandedRPM = self._targetRPM
 
         SmartDashboard.putNumber(
             "Indexer/Target RPM",
@@ -99,7 +98,6 @@ class IndexerSubsystem(Subsystem):
 
     def stop(self):
         self._targetRPM = None
-        self.motor.set(0.0)
 
     # Optional Helper
 

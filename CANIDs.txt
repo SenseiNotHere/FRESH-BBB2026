@@ -1,8 +1,7 @@
 SparkMax
-1 - Deploy Motor
-2 - Indexer Motor
-4 - Agitator Motor
-5 - Agitator Motor 2
+1 - Indexer
+2 - Intake Motor
+3 - Agitator
 
 TalonFX
 1 - Back Left Driving

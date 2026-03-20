@@ -12,7 +12,7 @@ import commands2
 
 from wpilib import SmartDashboard
 from wpimath.geometry import Rotation2d
-from constants.constants import AutoConstants
+from constants import AutoConstants
 
 
 class AimToDirectionConstants:

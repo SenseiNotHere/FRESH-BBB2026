@@ -3,7 +3,7 @@ from commands import PointTowardsLocation
 from superstructure import RobotState
 from superstructure import Superstructure
 from subsystems import DriveSubsystem
-from constants.field_constants import Hub
+from constants import Hub
 
 
 class FollowShootHub(ParallelCommandGroup):

@@ -76,7 +76,7 @@ class NavxGyro(Subsystem):
             if self.overshoot != 0.0 and self.yaw != 0 and notCalibrating:
                 angleMove = gyroAngle - self.yaw
                 if abs(angleMove) > 15:  # if less than 10 degrees, adjust (otherwise it's some kind of glitch or reset)
-                    log("NavX","WARNING: big angle move {angleMove} from {self.yaw} to {gyroAngle}")
+                    log("NavX",f"WARNING: big angle move {angleMove} from {self.yaw} to {gyroAngle}")
                 else:
                     adjustment = -angleMove * self.overshoot
                     self.adjustment += adjustment

@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-import typing
+from typing import Optional
 
-import commands2
-from commands2 import InstantCommand
+from commands2 import InstantCommand, Command, TimedCommandRobot
 from commands2.button import CommandGenericHID
 from wpilib import (
     XboxController,
@@ -18,7 +17,7 @@ from wpimath.geometry import (
 
 from buttonbindings import ButtonBindings
 from commands import HolonomicDrive
-from constants.constants import (
+from constants import (
     OIConstants,
     ShooterConstants,
     IndexerConstants,
@@ -74,7 +73,7 @@ class RobotContainer:
         log("RobotContainer","Initializing DriveSubsystem...")
         self.vroomvroom = DriveSubsystem()
 
-        if commands2.TimedCommandRobot.isSimulation():
+        if TimedCommandRobot.isSimulation():
             self.vroomvroom.simPhysics = BadSimPhysics(self.vroomvroom, robot)
 
         log("Robot Container", "DriveSubsystem Initialized!")
@@ -190,8 +189,6 @@ class RobotContainer:
         self.lavadora = AgitatorSubsystem(
             motorCANID=AgitatorConstants.kMotorCANID,
             motorInverted=AgitatorConstants.kMotorInverted,
-            motor2CANID=AgitatorConstants.kMotor2CANID,
-            motor2Inverted=AgitatorConstants.kMotor2Inverted,
         )
         log("Robot Container", "Agitator Initialized!")
 
@@ -204,7 +201,7 @@ class RobotContainer:
             shooter2=self.pewpew,
             indexer=self.slurp,
             agitator=self.lavadora,
-            shotCalculator=self.calc,
+#            shotCalculator=self.calc,
             vision=self.lemon,
             orchestra=self.orca,
             driverController=self.vroomvroomController,
@@ -251,7 +248,7 @@ class RobotContainer:
             self._lastPreviewedAuto = selected
 
     # Autonomous
-    def getAutonomousCommand(self) -> commands2.Command:
+    def getAutonomousCommand(self) -> Command:
         command = self.autoChooser.getSelected()
 
         if command is None:
@@ -262,6 +259,6 @@ class RobotContainer:
         return command
 
     # Test Mode
-    def getTestCommand(self) -> typing.Optional[commands2.Command]:
+    def getTestCommand(self) -> Optional[Command]:
         self.testChooser.setDefaultOption("None", None)
         return self.testChooser.getSelected()

@@ -10,7 +10,7 @@ from pathplannerlib.auto import NamedCommands, EventTrigger
 
 from wpimath.kinematics import ChassisSpeeds
 
-from constants.constants import AutoConstants
+from constants import AutoConstants
 
 from .drivesubsystem import DriveSubsystem
 from superstructure import Superstructure, RobotState, RobotReadiness
@@ -38,7 +38,7 @@ class AutonomousSubsystem(Subsystem):
 
         self.drivetrain = drivetrain
         self.robotContainer = robotContainer
-        self.superstructure = robotContainer.megamente
+        self.superstructure: Superstructure = robotContainer.megamente
 
         # Register commands and event triggers
         self.registerNamedCommands()
@@ -65,8 +65,8 @@ class AutonomousSubsystem(Subsystem):
         NamedCommands.registerCommand('INTAKE_STOWED', self.superstructure.createStateCommand(RobotState.INTAKE_STOWED))
 
     def registerEventTriggers(self):
-        EventTrigger('INTAKE_DEPLOYED').whileTrue(self.superstructure.createStateCommand(RobotState.INTAKE_DEPLOYED))
-        EventTrigger('INTAKE_STOWED').whileTrue(self.superstructure.createStateCommand(RobotState.INTAKE_STOWED))
+        EventTrigger('INTAKE_DEPLOYED').onTrue(self.superstructure.createStateCommand(RobotState.INTAKE_DEPLOYED))
+        EventTrigger('INTAKE_STOWED').onTrue(self.superstructure.createStateCommand(RobotState.INTAKE_STOWED))
 
     def _driveRobotRelative(self, speeds, feedforwards):
         self.drivetrain.driveRobotRelativeChassisSpeeds(

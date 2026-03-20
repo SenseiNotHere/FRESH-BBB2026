@@ -28,7 +28,7 @@ from wpilib import (
 from commands import AimToDirectionConstants
 from .phoenixswervemodule import PhoenixSwerveModuleSubsystem
 
-from constants.constants import (
+from constants import (
     DrivingConstants,
     ModuleConstants
 )

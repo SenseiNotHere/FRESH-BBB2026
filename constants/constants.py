@@ -108,19 +108,23 @@ class ModuleConstants:
     kDrivingD = 0.0
     kDrivingS = 0.0
     kDrivingV = 0.124
-    kMagicMotionAcceleration = 250.0
+    kDriveAcceleration = 250.0
     kDrivingFF = 1 / kDriveWheelFreeSpeedRps
 
     kDrivingMinOutput = -1.0
     kDrivingMaxOutput = 1.0
 
     # Turning PID + FF
-    kTurningP = 10.0
+    kTurningP = 5.0
     kTurningI = 0.0
-    kTurningD = 0.1
-    kTurningS = 0.1
-    kTurningV = 2.49
+    kTurningD = 0.0
+    kTurningS = 0.0
+    kTurningV = 0.0
     kTurningA = 0.0
+
+    kTurningMMCruiseVelocity = 20.0  # motor rot/s — very slow
+    kTurningMMAcceleration = 40.0  # motor rot/s²
+    kTurningMMJerk = 0.0
 
     kTurningDeadbandRot = 0.002
     kTurningMinOutput = -1.0
@@ -205,8 +209,8 @@ class ShooterConstants:
 
     kShooterMotorID = 9
     kShooterMotorInverted = True
-    kShooterMotor2ID = 0
-    kShooterMotor2Inverted = True
+    kShooterMotor2ID = 10
+    kShooterMotor2Inverted = False
 
     kMinRPM = 600
     kMaxRPM = 4500
@@ -217,7 +221,7 @@ class ShooterConstants:
     kD = 0.0
 
     kShooterSupplyLimit = 40
-    kShooterStatorLimit = 140
+    kShooterStatorLimit = 80
 
     DISTANCE_TO_RPS = InterpolatingMap()
     DISTANCE_TO_RPS.insert(2.57, 56.25)  # 3375 / 60
@@ -243,14 +247,14 @@ class ShooterConstants:
     # DISTANCE_TO_RPS.insert(X.XX, 0.0)  # maximum distance - find this too!x
 
 class IntakeConstants:
-    kDeployMotorID = 1
+    kDeployMotorID = 2
     kIntakeMotorID = 11
 
-    kIntakeMotorInverted = False
+    kIntakeMotorInverted = True
     kDeployMotorInverted = False
 
     # Deploy Motor PID
-    kDeployP = 0.0
+    kDeployP = 0.15
     kHomeP = 0.0
     kDeployI = 0.0
     kDeployD = 0.0
@@ -259,29 +263,27 @@ class IntakeConstants:
     kDeployMinOutput = -1.0
 
     # Intake Motor PID
-    kIntakeP = 0.0
+    kIntakeP = 0.65
     kIntakeI = 0.0
     kIntakeD = 0.0
     kIntakeFF = 0.0
-    kIntakeMaxOutput = 1.0
-    kIntakeMinOutput = -1.0
 
     # Positions
-    kDeployPosition = 0.0
+    kDeployPosition = 1.0
     kStowPosition = 0.0
 
     # Speeds
-    kHomeSpeed = 0.2
-    kIntakeSpeed = 0.5
-    kIntakePulseSpeed = 0.4
+    kHomeSpeed = 0.5
+    kIntakeSpeed = 1200
+    kIntakePulseSpeed = 0
     kDeployPulseSpeed = 0.3
 
     # Pulse Positions
-    kPulsePosition = 1.0
+    kPulsePosition = 0.5
 
 class IndexerConstants:
 
-    kIndexerMotorID = 2
+    kIndexerMotorID = 1
     kIndexerMotorInverted = True
 
     kMaxRPS = 40.0
@@ -294,7 +296,7 @@ class IndexerConstants:
 
 class AgitatorConstants:
 
-    kMotorCANID = 4
-    kMotorInverted = False
+    kMotorCANID = 3
+    kMotorInverted = True
     kMotor2CANID = 10
     kMotor2Inverted = False

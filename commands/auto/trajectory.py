@@ -250,7 +250,7 @@ class SwerveTrajectory(SimpleTrajectory):
         endPt, endHeading = waypoints[-1]
 
         import math
-        from constants.constants import DrivingConstants, AutoConstants
+        from constants import DrivingConstants, AutoConstants
         from wpimath.trajectory import TrajectoryConfig, TrajectoryGenerator
         from wpimath.controller import PIDController, ProfiledPIDControllerRadians, HolonomicDriveController
 

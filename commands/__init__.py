@@ -13,3 +13,4 @@ from .vision.limelight_comands import SetCameraPipeline
 from .auto.approach import ApproachTag, ApproachManually
 from .drive.point_torwards_location import PointTowardsLocation
 from .auto.follow_shoot_hub import FollowShootHub
+from .intake.intake_position import ToggleIntakePositionCommand
