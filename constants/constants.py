@@ -263,23 +263,23 @@ class IntakeConstants:
     kDeployMinOutput = -1.0
 
     # Intake Motor PID
-    kIntakeP = 0.65
+    kIntakeP = 0.65*4
     kIntakeI = 0.0
     kIntakeD = 0.0
-    kIntakeFF = 0.0
+    kIntakeFF = 0.124*0.90
 
     # Positions
-    kDeployPosition = 1.0
-    kStowPosition = 0.0
+    kDeployPosition = 18
+    kStowPosition = 1.0
 
     # Speeds
     kHomeSpeed = 0.5
     kIntakeSpeed = 1200
-    kIntakePulseSpeed = 0
+    kIntakePulseSpeed = 30
     kDeployPulseSpeed = 0.3
 
     # Pulse Positions
-    kPulsePosition = 0.5
+    kPulsePosition = 8
 
 class IndexerConstants:
 

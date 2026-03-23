@@ -15,11 +15,12 @@ class SuperstructureHelpers:
 
     def _stop_intake(self: "Superstructure"):
         if self.hasIntake:
-            self.intake.stop_intake()
+            self.intake.stop()
 
     def _stop_indexer(self: "Superstructure"):
         if self.hasIndexer:
             self.indexer.stop()
+
 
     def _stop_intake_position(self: "Superstructure"):
         if self.hasIntake:

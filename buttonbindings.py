@@ -75,18 +75,24 @@ class ButtonBindings:
         self.operatorController.axisGreaterThan(
             XboxController.Axis.kRightTrigger,
             threshold=0.05
-        ).whileTrue(
+        ).onTrue(
             self.superstructure.createStateCommand(RobotState.INTAKING)
         )
 
-        # Left Trigger = Deploy / Stow Intake
-        self.operatorController.axisGreaterThan(
-            XboxController.Axis.kLeftTrigger,
-            threshold=0.05
-        ).whileTrue(
-            ToggleIntakePositionCommand(self.superstructure)
-        )
+        # Left Bumper = Stow
+        self.operatorController.button(
+             XboxController.Button.kRightBumper
+         ).onTrue(
+             self.superstructure.createStateCommand(RobotState.INTAKE_STOWED)
+         )
         
+        # Right Bumper = Deploy
+        self.operatorController.button(
+            XboxController.Button.kLeftBumper
+        ).whileTrue(
+            self.superstructure.createStateCommand(RobotState.INTAKE_STOWED)
+        )
+
         # A Button = Play Song
         self.operatorController.button(
             XboxController.Button.kA

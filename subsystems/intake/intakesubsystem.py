@@ -3,7 +3,7 @@ from wpilib import SmartDashboard, DriverStation, Timer, SendableChooser
 
 from phoenix6.hardware import TalonFX
 from phoenix6.controls import VelocityTorqueCurrentFOC
-from phoenix6.configs import TalonFXConfiguration, Slot0Configs
+from phoenix6.configs import TalonFXConfiguration, Slot0Configs, CurrentLimitsConfigs
 from phoenix6.signals import NeutralModeValue, InvertedValue
 
 from rev import (
@@ -14,7 +14,8 @@ from rev import (
     LimitSwitchConfig,
     ClosedLoopSlot,
     PersistMode,
-    ResetMode
+    ResetMode,
+    FeedbackSensor
 )
 
 from constants import IntakeConstants
@@ -68,12 +69,14 @@ class IntakeSubsystem(Subsystem):
             IntakeConstants.kDeployMaxOutput,
             ClosedLoopSlot.kSlot0
         )
+        deployConfig.closedLoop.setFeedbackSensor(FeedbackSensor.kPrimaryEncoder)
 
         self.deployMotor.configure(
             deployConfig,
             ResetMode.kResetSafeParameters,
             PersistMode.kPersistParameters
         )
+        self.deployMotor.clearFaults()
 
         self.deployEncoder   = self.deployMotor.getEncoder()
         self.deployAbsEncoder = self.deployMotor.getAbsoluteEncoder()
@@ -100,8 +103,20 @@ class IntakeSubsystem(Subsystem):
             .with_k_p(IntakeConstants.kIntakeP)
             .with_k_i(IntakeConstants.kIntakeI)
             .with_k_d(IntakeConstants.kIntakeD)
+            .with_k_v(IntakeConstants.kIntakeFF
+                      )
         )
         self.intakeMotor.configurator.apply(slot0Intake)
+        
+        currentConfig = CurrentLimitsConfigs()
+        (
+            currentConfig
+            .with_supply_current_limit(20)
+            .with_stator_current_limit(20)
+            .with_supply_current_limit_enable(True)
+            .with_stator_current_limit_enable(True)
+        )
+        self.intakeMotor.configurator.apply(currentConfig)
 
         self.intakeRequest = VelocityTorqueCurrentFOC(0)
 
@@ -155,14 +170,15 @@ class IntakeSubsystem(Subsystem):
 
         raw = self.deployAbsEncoder.getPosition()
         offset = raw - target_position
+        print(f"Target Position: {target_position}")
 
-        syncConfig = SparkMaxConfig()
-        syncConfig.absoluteEncoder.zeroOffset(offset)
-        self.deployMotor.configure(
-            syncConfig,
-            ResetMode.kNoResetSafeParameters,
-            PersistMode.kPersistParameters
-        )
+#        syncConfig = SparkMaxConfig()
+#        syncConfig.absoluteEncoder.zeroOffset(offset)
+#        self.deployMotor.configure(
+#            syncConfig,
+#            ResetMode.kNoResetSafeParameters,
+#            PersistMode.kPersistParameters
+#        )
 
     def _sync_to_deploy(self):
         self._sync_encoders(IntakeConstants.kDeployPosition)
@@ -218,7 +234,9 @@ class IntakeSubsystem(Subsystem):
         SmartDashboard.putBoolean("Intake/Intake Deployed", self._isDeployed)
         SmartDashboard.putBoolean("Intake/Forward Limit", self.forward_limit_pressed())
         SmartDashboard.putBoolean("Intake/Reverse Limit", self.reverse_limit_pressed())
-        SmartDashboard.putNumber("Intake Actual Speed", self.intakeMotor.get_velocity().value)
+        SmartDashboard.putNumber("Intake/Intake Actual Speed", self.intakeMotor.get_velocity().value)
+        SmartDashboard.putNumber("Intake/Intake Motor Supply Current", self.intakeMotor.get_supply_current().value)
+        SmartDashboard.putNumber("Pivot Motor/Pivot Motor Positon", self.deployMotor.getEncoder().getPosition())
 
     # Homing
 
@@ -229,6 +247,12 @@ class IntakeSubsystem(Subsystem):
         self.deployMotor.set(speed)
 
     # Deploy Control
+
+    def driveDeployMotor(self, speed: float):
+        self.deployMotor.set(speed)
+
+    def stopDeployMotor(self):
+        self.deployMotor.stopMotor()
 
     def deploy(self):
         if not self._homed:
