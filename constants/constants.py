@@ -269,8 +269,12 @@ class IntakeConstants:
     kIntakeFF = 0.124*0.90
 
     # Positions
-    kDeployPosition = 18
+    kDeployPosition = 18.0
     kStowPosition = 1.0
+    assert kDeployPosition * kStowPosition > 0, (
+        "both positions should be nonzero and of same sign, for brownout detection"
+    )
+    kBrownoutPosition = 0.5 * min(abs(kDeployPosition), abs(kStowPosition))  # if browned out, position is near 0.0
 
     # Speeds
     kHomeSpeed = 0.5
