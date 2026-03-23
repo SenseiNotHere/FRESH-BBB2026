@@ -207,6 +207,10 @@ class IntakeSubsystem(Subsystem):
         if not self._homed:
             self._run_homing()
             return
+        elif abs(self.deployEncoder.getPosition()) < IntakeConstants.kBrownoutPosition:
+            print("WARNING: intake arm not homed anymore, likely browned out")
+            self._homed = False
+            return
 
         # Intake Roller Pulsing
         if self._pulseIntakeActive:
