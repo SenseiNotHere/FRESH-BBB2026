@@ -14,8 +14,8 @@ class SuperstructureHelpers:
             self.shooter2.stop()
 
     def _stop_intake(self: "Superstructure"):
-        if self.hasIntake:
-            self.intake.stop()
+        pass
+
 
     def _stop_indexer(self: "Superstructure"):
         if self.hasIndexer:
@@ -23,8 +23,7 @@ class SuperstructureHelpers:
 
 
     def _stop_intake_position(self: "Superstructure"):
-        if self.hasIntake:
-            self.intake.stop_deploy()
+        pass
 
     def _stop_agitator(self: "Superstructure"):
         if self.hasAgitator:

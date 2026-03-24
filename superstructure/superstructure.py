@@ -97,7 +97,6 @@ class Superstructure(SuperstructureStates, SuperstructureHelpers):
         # Subsystem availability flags
         self.hasShooter = self.shooter is not None
         self.hasShooter2 = self.shooter2 is not None
-        self.hasIntake = self.intake is not None
         self.hasIndexer = self.indexer is not None
         self.hasAgitator = self.agitator is not None
         self.hasShotCalc = self.shotCalculator is not None
@@ -185,9 +184,6 @@ class Superstructure(SuperstructureStates, SuperstructureHelpers):
 
         # Intake
         intake_deployed = False
-        if self.hasIntake:
-            intake_deployed = self.intake.is_deployed()
-
         self.robot_readiness.intakeDeployed = intake_deployed
 
         # Feeding

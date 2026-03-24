@@ -1,7 +1,8 @@
 from commands2 import InstantCommand
 from wpilib import XboxController
 
-from commands import ResetXY, ResetSwerveFront, FollowShootHub, ToggleIntakePositionCommand
+from commands import ResetXY, ResetSwerveFront, FollowShootHub
+from commands.intake.intake_position import StowIntake, DeployIntake, PulseIntake, RunIntakeRollers
 from superstructure import RobotState
 
 
@@ -52,11 +53,15 @@ class ButtonBindings:
 
         # Shooter
         # Right Trigger = Prep Shot
+        shootCmd = self.superstructure.createStateCommand(RobotState.PREP_SHOT)
+        pulseCmd = PulseIntake(self.robotContainer.gulp, deploy_at_end=True)
+        shootAndPulse = shootCmd.deadlineWith(pulseCmd)
+    
         self.driverController.axisGreaterThan(
             XboxController.Axis.kRightTrigger,
             0.1
         ).whileTrue(
-            self.superstructure.createStateCommand(RobotState.PREP_SHOT)
+            shootAndPulse
         )
 
         # Follow Shoot Hub
@@ -75,27 +80,34 @@ class ButtonBindings:
         self.operatorController.axisGreaterThan(
             XboxController.Axis.kRightTrigger,
             threshold=0.05
-        ).onTrue(
-            self.superstructure.createStateCommand(RobotState.INTAKING)
+        ).whileTrue(
+            RunIntakeRollers(self.robotContainer.gulp)
         )
 
         # Left Bumper = Stow
         self.operatorController.button(
-             XboxController.Button.kRightBumper
-         ).onTrue(
-             self.superstructure.createStateCommand(RobotState.INTAKE_STOWED)
-         )
-        
+             XboxController.Button.kLeftBumper
+        ).onTrue(
+            StowIntake(self.robotContainer.gulp)
+            # StowIntake(self.robotContainer.gulp)
+        )
+
         # Right Bumper = Deploy
         self.operatorController.button(
-            XboxController.Button.kLeftBumper
-        ).whileTrue(
-            self.superstructure.createStateCommand(RobotState.INTAKE_STOWED)
+            XboxController.Button.kRightBumper
+        ).onTrue(
+            DeployIntake(self.robotContainer.gulp)
         )
 
         # A Button = Play Song
         self.operatorController.button(
             XboxController.Button.kA
         ).whileTrue(
-            self.superstructure.createStateCommand(RobotState.PLAYING_SONG)
+            InstantCommand(lambda: self.robotContainer.gulp.driveDeployMotor(0.5))
+        )
+        
+        self.operatorController.button(
+            XboxController.Button.kB
+        ).whileTrue(
+            InstantCommand(lambda: self.robotContainer.gulp.driveDeployMotor(-0.5))
         )

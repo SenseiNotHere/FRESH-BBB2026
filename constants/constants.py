@@ -122,8 +122,8 @@ class ModuleConstants:
     kTurningV = 0.0
     kTurningA = 0.0
 
-    kTurningMMCruiseVelocity = 20.0  # motor rot/s — very slow
-    kTurningMMAcceleration = 40.0  # motor rot/s²
+    kTurningMMCruiseVelocity = 40.0  # 20
+    kTurningMMAcceleration = 120.0  # 40
     kTurningMMJerk = 0.0
 
     kTurningDeadbandRot = 0.002
@@ -247,40 +247,42 @@ class ShooterConstants:
     # DISTANCE_TO_RPS.insert(X.XX, 0.0)  # maximum distance - find this too!x
 
 class IntakeConstants:
+    # CAN IDs
     kDeployMotorID = 2
-    kIntakeMotorID = 11
+    kRollerMotorID = 11
 
-    kIntakeMotorInverted = True
+    # Motor Inversions
     kDeployMotorInverted = False
+    kRollerMotorInverted = True
 
-    # Deploy Motor PID
-    kDeployP = 0.15
-    kHomeP = 0.0
+    # Deploy (Spark MAX)
+    kDeployP = 0.05
     kDeployI = 0.0
     kDeployD = 0.0
     kDeployFF = 0.0
-    kDeployMaxOutput = 1.0
+
     kDeployMinOutput = -1.0
+    kDeployMaxOutput = 1.0
 
-    # Intake Motor PID
-    kIntakeP = 0.65*4
-    kIntakeI = 0.0
-    kIntakeD = 0.0
-    kIntakeFF = 0.124*0.90
-
-    # Positions
-    kDeployPosition = 18
+    # Positions (rotations)
+    kDeployPosition = 18.0
     kStowPosition = 1.0
 
-    # Speeds
-    kHomeSpeed = 0.5
+    # Homing
+    kHomeSpeed = 0.2
+
+    # Anti-jam (position wiggle)
+    kPulsePosition = 8.0
+
+    # Rollers (TalonFX)
+    
+    kIntakeP = 2.6 
+    kIntakeI = 0.0
+    kIntakeD = 0.0
+    kIntakeFF = 0.112
+
     kIntakeSpeed = 1200
     kIntakePulseSpeed = 30
-    kDeployPulseSpeed = 0.3
-
-    # Pulse Positions
-    kPulsePosition = 8
-
 class IndexerConstants:
 
     kIndexerMotorID = 1

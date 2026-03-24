@@ -143,8 +143,8 @@ class RobotContainer:
         self.gulp = IntakeSubsystem(
             deployMotorCANID=IntakeConstants.kDeployMotorID,
             deployMotorInverted=IntakeConstants.kDeployMotorInverted,
-            intakeMotorCANID=IntakeConstants.kIntakeMotorID,
-            intakeMotorInverted=IntakeConstants.kIntakeMotorInverted,
+            intakeMotorCANID=IntakeConstants.kRollerMotorID,
+            intakeMotorInverted=IntakeConstants.kRollerMotorInverted,
         )
         log("Robot Container","Intake Initialized!")
 

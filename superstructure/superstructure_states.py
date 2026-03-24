@@ -13,7 +13,6 @@ class SuperstructureStates:
         """
         self._stop_shooter()
         self._stop_indexer()
-        self._stop_intake()
         self._stop_agitator()
         self._stop_orchestra()
 
@@ -22,9 +21,7 @@ class SuperstructureStates:
         """
         Handles the intaking state by starting the intake.
         """
-
-        if self.hasIntake:
-            self.intake.intake()
+        pass
 
     def _handle_prep_shot(self: "Superstructure"):
         """
@@ -56,29 +53,12 @@ class SuperstructureStates:
         else:
             self._stop_feeders()
 
-        # Jam prevention
-        if self.hasIntake:
-            self.intake.pulse_position()
-            self.intake.pulse_intake()
-
     # Starts intake deployment/retraction on entry
     def _handle_intake_position(self: "Superstructure"):
         """
         Handles the intake position state by deploying/retracting the intake.
         """
-        if not self.hasIntake:
-            return
-
-        # Deploy intake
-        if self.robot_state == RobotState.INTAKE_DEPLOYED:
-            self.intake.deploy()
-
-        # Stow intake
-        elif self.robot_state == RobotState.INTAKE_STOWED:
-            self.intake.stow()
-
-        # Go to IDLE after done.
-        self.setState(RobotState.IDLE)
+        pass
 
     # Starts intake and shooter on entry, when shooterReady start indexers and agitator
     def _handle_passing_fuel(self: "Superstructure"):
@@ -86,8 +66,7 @@ class SuperstructureStates:
         Handles passing fuel by running intake, spinning up shooters from dashboard percent,
         and feeding only once the shooter path is ready.
         """
-        if self.hasIntake:
-            self.intake.intake()
+        pass
 
         self._spin_up_shooters_dashboard()
 

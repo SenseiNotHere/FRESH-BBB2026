@@ -15,3 +15,6 @@ TalonFX
 9 - Shooter Motor
 10 - Shooter Motor 2
 11 - Intake Motor
+
+Intake Pos
+Max F = 18.7618465423584
