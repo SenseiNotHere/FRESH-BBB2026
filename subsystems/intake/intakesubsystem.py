@@ -164,7 +164,6 @@ class IntakeSubsystem(Subsystem):
 
     def _sync_to_stow(self):
         self._sync_encoders(IntakeConstants.kStowPosition)
-        print("sync_to_stow")
         self._homed = True
         self._isDeployed = False
 
@@ -203,11 +202,9 @@ class IntakeSubsystem(Subsystem):
     # Deploy Control
 
     def driveDeployMotor(self, speed: float):
-        print(f"Driving Deploy Motor at {speed}")
         self.deployMotor.set(speed)
 
     def stopDeployMotor(self):
-        print("stopDeployMotor")
         self.deployMotor.stopMotor()
 
     def deploy(self):
@@ -247,7 +244,6 @@ class IntakeSubsystem(Subsystem):
             self.deploy()
 
     def stop_deploy(self):
-        print("stop_deploy()")
         self.deployMotor.set(0)
 
     # Intake Rollers

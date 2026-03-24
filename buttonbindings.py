@@ -1,9 +1,12 @@
-from commands2 import InstantCommand
+from commands2 import InstantCommand, ParallelCommandGroup
 from wpilib import XboxController
 
 from commands import ResetXY, ResetSwerveFront, FollowShootHub
+from commands.drive.point_torwards_location import PointTowardsLocation
 from commands.intake.intake_position import StowIntake, DeployIntake, PulseIntake, RunIntakeRollers
 from superstructure import RobotState
+
+from constants import Hub
 
 
 class ButtonBindings:
@@ -66,11 +69,19 @@ class ButtonBindings:
 
         # Follow Shoot Hub
         # Right Bumper = Follow Shoot Hub
-#        self.driverController.button(
-#            XboxController.Button.kRightBumper
-#        ).whileTrue(
-#            FollowShootHub(self.superstructure, self.drivetrain)
-#        )
+        point_cmd = PointTowardsLocation(
+            drivetrain=self.robotContainer.vroomvroom,
+            location=Hub.BLUE_HUB,
+            locationIfRed=Hub.RED_HUB
+        )
+        shoot_cmd = self.robotContainer.megamente.createStateCommand(RobotState.PREP_SHOT)
+        pointAndShoot = ParallelCommandGroup(point_cmd, shoot_cmd)
+
+        self.driverController.button(
+            XboxController.Button.kRightBumper
+        ).whileTrue(
+            pointAndShoot
+        )
 
     # Operator Controls
 

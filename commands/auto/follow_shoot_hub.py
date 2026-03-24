@@ -25,7 +25,3 @@ class FollowShootHub(ParallelCommandGroup):
 
         self.superstructure = superstructure
         self.drivetrain = drivetrain
-
-    def end(self, interrupted: bool):
-        self.superstructure.setState(RobotState.IDLE)
-        self.drivetrain.stop()
