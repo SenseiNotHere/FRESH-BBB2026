@@ -467,13 +467,14 @@ class DriveSubsystem(Subsystem):
     def calculateOverrideRotSpeed(self):
         # 1. how many degrees we need to turn?
         pose = self.getPose()
+        shooterPointingHere = pose.rotation() + U_TURN
         vectorToTarget = self.overrideControlsToFaceThisPoint - pose.translation()
 
         if not vectorToTarget.squaredNorm() > 0:
             return 0.0
 
         targetDirection = vectorToTarget.angle()
-        degreesRemainingToTurn = (targetDirection - pose.rotation()).degrees()
+        degreesRemainingToTurn = (targetDirection - shooterPointingHere).degrees()
 
         # wrap to [-180, 180]
         while degreesRemainingToTurn > 180:
@@ -482,8 +483,6 @@ class DriveSubsystem(Subsystem):
             degreesRemainingToTurn += 360
 
         # small deadband so it doesn't oscillate near the target
-        if abs(degreesRemainingToTurn) < 2:
-            return 0.0
 
         # 2. proportional control
         proportionalSpeed = AimToDirectionConstants.kP * abs(degreesRemainingToTurn)
@@ -493,8 +492,11 @@ class DriveSubsystem(Subsystem):
 
         rotSpeed = min(proportionalSpeed, 1.0)
 
+        if abs(degreesRemainingToTurn) < 2:
+            return 0.0
+
         # 3. direction
-        return rotSpeed if degreesRemainingToTurn > 0 else -rotSpeed
+        return rotSpeed if degreesRemainingToTurn < 0 else -rotSpeed
 
 class SlewRateLimiter2d:
     """
