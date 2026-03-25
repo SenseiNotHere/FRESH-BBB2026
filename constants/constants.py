@@ -115,15 +115,15 @@ class ModuleConstants:
     kDrivingMaxOutput = 1.0
 
     # Turning PID + FF
-    kTurningP = 5.0
+    kTurningP = 8.0 # 5.0
     kTurningI = 0.0
     kTurningD = 0.0
     kTurningS = 0.0
     kTurningV = 0.0
     kTurningA = 0.0
 
-    kTurningMMCruiseVelocity = 40.0  # 20
-    kTurningMMAcceleration = 120.0  # 40
+    kTurningMMCruiseVelocity = 120.0  # 40 | If still not 150.0
+    kTurningMMAcceleration = 400.0  # 120 | If still not 600.0
     kTurningMMJerk = 0.0
 
     kTurningDeadbandRot = 0.002
@@ -223,28 +223,29 @@ class ShooterConstants:
     kShooterSupplyLimit = 40
     kShooterStatorLimit = 80
 
-    DISTANCE_TO_RPS = InterpolatingMap()
-    DISTANCE_TO_RPS.insert(2.57, 56.25)  # 3375 / 60
-    DISTANCE_TO_RPS.insert(3.0, 57.75)  # 3465 / 60
-    DISTANCE_TO_RPS.insert(3.2, 58.50)  # 3510 / 60
-    DISTANCE_TO_RPS.insert(3.35, 59.00)  # 3540 / 60 - NEEDS RETUNING
-    DISTANCE_TO_RPS.insert(3.40, 59.25)  # 3555 / 60
-    DISTANCE_TO_RPS.insert(3.6, 60.375)  # 3622.5 / 60
-    DISTANCE_TO_RPS.insert(3.8, 61.50)  # 3690 / 60
-    DISTANCE_TO_RPS.insert(4.0, 63.00)  # 3780 / 60
-    DISTANCE_TO_RPS.insert(4.2, 63.75)  # 3825 / 60
-    DISTANCE_TO_RPS.insert(4.49, 63.75)  # NEEDS RETUNING
+    #DISTANCE_TO_RPS = InterpolatingMap()
+    #DISTANCE_TO_RPS.insert(2.57, 56.25)  # 3375 / 60
+    #DISTANCE_TO_RPS.insert(3.0, 57.75)  # 3465 / 60
+    #DISTANCE_TO_RPS.insert(3.2, 58.50)  # 3510 / 60
+    #DISTANCE_TO_RPS.insert(3.35, 59.00)  # 3540 / 60 - NEEDS RETUNING
+    #DISTANCE_TO_RPS.insert(3.40, 59.25)  # 3555 / 60
+    #DISTANCE_TO_RPS.insert(3.6, 60.375)  # 3622.5 / 60
+    #DISTANCE_TO_RPS.insert(3.8, 61.50)  # 3690 / 60
+    #DISTANCE_TO_RPS.insert(4.0, 63.00)  # 3780 / 60
+    #DISTANCE_TO_RPS.insert(4.2, 63.75)  # 3825 / 60
+    #DISTANCE_TO_RPS.insert(4.49, 63.75)  # NEEDS RETUNING
 
-    # DISTANCE_TO_RPS.insert(X.XX, 0.0)  # minimum distance - find this first!
-    # DISTANCE_TO_RPS.insert(2.0, 0.0)
-    # DISTANCE_TO_RPS.insert(2.5, 0.0)
-    # DISTANCE_TO_RPS.insert(3.0, 0.0)
-    # DISTANCE_TO_RPS.insert(3.5, 0.0)
-    # DISTANCE_TO_RPS.insert(4.0, 0.0)
-    # DISTANCE_TO_RPS.insert(4.5, 0.0)
-    # DISTANCE_TO_RPS.insert(5.0, 0.0)
-    # DISTANCE_TO_RPS.insert(5.5, 0.0)
-    # DISTANCE_TO_RPS.insert(X.XX, 0.0)  # maximum distance - find this too!x
+    DISTANCE_TO_RPS = InterpolatingMap()
+    DISTANCE_TO_RPS.insert(1.0, 65.0)  # minimum distance - find this first!
+    DISTANCE_TO_RPS.insert(2.0, 69.0)
+    DISTANCE_TO_RPS.insert(2.5, 73.0)
+    DISTANCE_TO_RPS.insert(3.0, 75.0)
+    DISTANCE_TO_RPS.insert(3.5, 80.0)
+#    DISTANCE_TO_RPS.insert(4.0, 0.0)
+#    DISTANCE_TO_RPS.insert(4.5, 0.0)
+#    DISTANCE_TO_RPS.insert(5.0, 0.0)
+#    DISTANCE_TO_RPS.insert(5.5, 0.0)
+#    DISTANCE_TO_RPS.insert(X.XX, 0.0)  # maximum distance - find this too!x
 
 class IntakeConstants:
     # CAN IDs
@@ -272,7 +273,7 @@ class IntakeConstants:
     kHomeSpeed = 0.2
 
     # Anti-jam (position wiggle)
-    kPulsePosition = 8.0
+    kPulsePosition = 12.0
 
     # Rollers (TalonFX)
     

@@ -109,7 +109,7 @@ class ShooterSubsystem(Subsystem):
         self._targetRPS = target_rpm / 60.0
 
     def useDashboardPercent(self):
-        percentInput = SmartDashboard.getNumber("Shooter Percent Input", 75)
+        percentInput = SmartDashboard.getNumber("Shooter/Shooter Percent Input", 75)
         percent = percentInput / 100
         self.setPercent(percent)
 

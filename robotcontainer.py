@@ -108,8 +108,15 @@ class RobotContainer:
 
         self.localizer.addCamera(
             camera=self.lemon,
-            cameraPoseOnRobot=Translation3d(-0.17, 0.0, 0.508),
+            cameraPoseOnRobot=Translation3d(0.051, 0.241, 0.533),
             cameraHeadingOnRobot=Rotation2d.fromDegrees(180),
+            minPercentFrame=0.07,
+            maxRotationSpeed=720,
+        )
+        self.localizer.addCamera(
+            camera=self.limao,
+            cameraPoseOnRobot=Translation3d(0.305, 0.025, 0.459),
+            cameraHeadingOnRobot=Rotation2d.fromDegrees(0),
             minPercentFrame=0.07,
             maxRotationSpeed=720,
         )
@@ -201,7 +208,7 @@ class RobotContainer:
             shooter2=self.pewpew,
             indexer=self.slurp,
             agitator=self.lavadora,
-#            shotCalculator=self.calc,
+            shotCalculator=self.calc,
             vision=self.lemon,
             orchestra=self.orca,
             driverController=self.vroomvroomController,

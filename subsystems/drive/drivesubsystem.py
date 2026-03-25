@@ -474,6 +474,7 @@ class DriveSubsystem(Subsystem):
             return 0.0
 
         targetDirection = vectorToTarget.angle()
+        SmartDashboard.putNumber("Drivetrain/Target Direction", (targetDirection + U_TURN).degrees())
         degreesRemainingToTurn = (targetDirection - shooterPointingHere).degrees()
 
         # wrap to [-180, 180]
@@ -491,9 +492,9 @@ class DriveSubsystem(Subsystem):
             proportionalSpeed = math.sqrt(0.5 * proportionalSpeed)
 
         rotSpeed = min(proportionalSpeed, 1.0)
-
-        if abs(degreesRemainingToTurn) < 2:
-            return 0.0
+        # 
+        # if abs(degreesRemainingToTurn) < 2:
+        #     return 0.0
 
         # 3. direction
         return rotSpeed if degreesRemainingToTurn < 0 else -rotSpeed

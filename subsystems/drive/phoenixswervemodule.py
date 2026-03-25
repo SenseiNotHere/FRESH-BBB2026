@@ -77,7 +77,7 @@ class PhoenixSwerveModuleSubsystem(Subsystem):
 
         # Drive Motor Config
         driveConfig = TalonFXConfiguration()
-        driveConfig.motor_output.neutral_mode = NeutralModeValue.BRAKE
+        driveConfig.motor_output.neutral_mode = NeutralModeValue.COAST
         driveConfig.motor_output.inverted = (
             InvertedValue.CLOCKWISE_POSITIVE
             if driveMotorInverted
@@ -210,7 +210,7 @@ class PhoenixSwerveModuleSubsystem(Subsystem):
     # Control
 
     def setDesiredState(self, desired: SwerveModuleState) -> None:
-        if abs(desired.speed) < 0.02:  # m/s, tune 0.02–0.10
+        if abs(desired.speed) < 0.005:  # m/s, tune 0.02–0.10
             desired = SwerveModuleState(0.0, Rotation2d(self.getTurningPosition()))
 
         optimized = self._optimizeState(desired)

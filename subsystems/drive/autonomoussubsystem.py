@@ -17,6 +17,8 @@ from superstructure import Superstructure, RobotState, RobotReadiness
 
 from utils import log
 
+from commands.intake.intake_position import DeployIntake, StowIntake, RunIntakeRollers
+
 if TYPE_CHECKING:
     from robotcontainer import RobotContainer
 
@@ -61,12 +63,12 @@ class AutonomousSubsystem(Subsystem):
     def registerNamedCommands(self):
         NamedCommands.registerCommand('PREP_SHOT', self.superstructure.createStateCommand(RobotState.PREP_SHOT))
         NamedCommands.registerCommand('INTAKING', self.superstructure.createStateCommand(RobotState.INTAKING))
-        NamedCommands.registerCommand('INTAKE_DEPLOYED', self.superstructure.createStateCommand(RobotState.INTAKE_DEPLOYED))
-        NamedCommands.registerCommand('INTAKE_STOWED', self.superstructure.createStateCommand(RobotState.INTAKE_STOWED))
+        NamedCommands.registerCommand('INTAKE_DEPLOYED', DeployIntake(self.robotContainer.gulp))
+        NamedCommands.registerCommand('INTAKE_STOWED', StowIntake(self.robotContainer.gulp))
 
     def registerEventTriggers(self):
-        EventTrigger('INTAKE_DEPLOYED').onTrue(self.superstructure.createStateCommand(RobotState.INTAKE_DEPLOYED))
-        EventTrigger('INTAKE_STOWED').onTrue(self.superstructure.createStateCommand(RobotState.INTAKE_STOWED))
+        EventTrigger('INTAKE_DEPLOYED').whileTrue(DeployIntake(self.robotContainer.gulp))
+        EventTrigger('INTAKE_STOWED').whileTrue(StowIntake(self.robotContainer.gulp))
 
     def _driveRobotRelative(self, speeds, feedforwards):
         self.drivetrain.driveRobotRelativeChassisSpeeds(

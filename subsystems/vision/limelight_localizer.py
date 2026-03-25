@@ -13,7 +13,7 @@ from utils import log
 U_TURN = Rotation2d.fromDegrees(180)
 LEARNING_RATE = 0.3
 TYPICAL_PERCENT_FRAME = 0.7  # when the tag is ~2m away
-EMPHASIZE_TAGS_NEARBY = False
+EMPHASIZE_TAGS_NEARBY = True
 
 @dataclass
 class CameraState:
@@ -40,9 +40,11 @@ class LimelightLocalizer(Subsystem):
         self.flipIfRed = flipIfRed
 
         self.learningRateMult = SendableChooser()
+        self.learningRateMult.addOption("300%", 3.0)
         self.learningRateMult.addOption("100%", 1.0)
-        self.learningRateMult.addOption("30%", 0.3)
-        self.learningRateMult.setDefaultOption("10%", 0.1)
+        self.learningRateMult.addOption("50%", 0.5)
+        self.learningRateMult.setDefaultOption("30%", 0.3)
+        self.learningRateMult.addOption("10%", 0.1)
         self.learningRateMult.addOption("3%", 0.03)
         self.learningRateMult.addOption("1%", 0.01)
         self.learningRateMult.addOption("0.1%", 0.001)

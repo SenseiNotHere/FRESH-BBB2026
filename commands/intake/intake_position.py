@@ -18,6 +18,21 @@ class RunIntakeRollers(Command):
     def isFinished(self) -> bool:
         return False
 
+class RunIntakeRollersInverse(Command):
+    def __init__(self, intake: IntakeSubsystem):
+        super().__init__()
+        self.intake = intake
+        self.addRequirements(intake)
+    
+    def initialize(self):
+        self.intake.intake_reverse()
+        
+    def end(self, interrupted: bool):
+        self.intake.stop_intake()
+        
+    def isFinished(self) -> bool:
+        return False
+
 class DeployIntake(Command):
 
     def __init__(self, intake: IntakeSubsystem):
@@ -59,13 +74,13 @@ class PulseIntake(Command):
 
     def execute(self):
         t = Timer.getFPGATimestamp() - self.start_time
-        phase = (t % 1.0) > 0.5
+        phase = (t % 3.0) > 1.5
         if phase:
             self.intake.intake()
             self.intake.go_to_pulse_position()
         else:
             self.intake.stop_intake()
-            self.intake.stow()
+            self.intake.deploy()
 
     def end(self, interrupted: bool):
         if self.deploy_at_end:

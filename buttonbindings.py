@@ -3,7 +3,8 @@ from wpilib import XboxController
 
 from commands import ResetXY, ResetSwerveFront, FollowShootHub
 from commands.drive.point_torwards_location import PointTowardsLocation
-from commands.intake.intake_position import StowIntake, DeployIntake, PulseIntake, RunIntakeRollers
+from commands.intake.intake_position import StowIntake, DeployIntake, PulseIntake, RunIntakeRollers, \
+    RunIntakeRollersInverse
 from superstructure import RobotState
 
 from constants import Hub
@@ -75,7 +76,8 @@ class ButtonBindings:
             locationIfRed=Hub.RED_HUB
         )
         shoot_cmd = self.robotContainer.megamente.createStateCommand(RobotState.PREP_SHOT)
-        pointAndShoot = ParallelCommandGroup(point_cmd, shoot_cmd)
+        pulseCmd2 = PulseIntake(self.robotContainer.gulp, deploy_at_end=True)
+        pointAndShoot = ParallelCommandGroup(point_cmd)
 
         self.driverController.button(
             XboxController.Button.kRightBumper
@@ -93,6 +95,14 @@ class ButtonBindings:
             threshold=0.05
         ).whileTrue(
             RunIntakeRollers(self.robotContainer.gulp)
+        )
+        
+        # Left Trigger = Reverse Intake
+        self.operatorController.axisGreaterThan(
+            XboxController.Axis.kLeftTrigger,
+            threshold=0.05
+        ).whileTrue(
+            RunIntakeRollersInverse(self.robotContainer.gulp)
         )
 
         # Left Bumper = Stow
