@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.0,
-        "y": 0.6
+        "x": 3.541370786516854,
+        "y": 4.11652808988764
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.7158981648056084,
-        "y": 0.6923384193082369
+        "x": 2.8958211092529833,
+        "y": 4.108382626107157
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.7477528089887637,
-        "y": 2.7305505617977532
+        "x": 1.9209999999999998,
+        "y": 4.11652808988764
       },
       "prevControl": {
-        "x": 1.2891573033707862,
-        "y": 1.1305617977528095
+        "x": 1.668294878412678,
+        "y": 4.119383403220861
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,10 +42,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -155.0
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": "DS 3",
+  "folder": "DS 2",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0

@@ -51,7 +51,7 @@ class ShotCalculator(Subsystem):
         target_pose = getHubPose()
 
         # 2D Distance
-        DISTANCE_OFFSET = 0.7
+        DISTANCE_OFFSET = 0.0
         self._target_distance = (
             drivetrain_pose.translation()
             .distance(target_pose.translation())

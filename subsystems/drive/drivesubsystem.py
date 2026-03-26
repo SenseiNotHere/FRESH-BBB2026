@@ -143,18 +143,23 @@ class DriveSubsystem(Subsystem):
         )
 
     def getAlliance(self):
+        if self.alliance is None:
+            self.determineAlliance()
         return self.alliance
 
-    def periodic(self) -> None:
-        if self.simPhysics is not None:
-            self.simPhysics.periodic()
-
+    def determineAlliance(self):
         alliance: DriverStation.Alliance = self.allianceOverride.getSelected()
         if alliance is None:
             alliance = DriverStation.getAlliance()
         if alliance != self.alliance:
             SmartDashboard.putString("Alliance/used", "None" if alliance is None else str(alliance).split(".")[-1])
             self.alliance = alliance
+
+    def periodic(self) -> None:
+        if self.simPhysics is not None:
+            self.simPhysics.periodic()
+
+        self.determineAlliance()
 
         # Sync turning encoders on all modules to prevent drift
         self.frontLeft.periodic()
@@ -348,12 +353,18 @@ class DriveSubsystem(Subsystem):
         self.backLeft.setDesiredState(rl)
         self.backRight.setDesiredState(rr)
 
-    def driveRobotRelativeChassisSpeeds(self, speeds: ChassisSpeeds, feedforwards=None) -> None:
+    def driveRobotRelativeChassisSpeeds(
+            self,
+            speeds: ChassisSpeeds,
+            feedforwards=None
+    ) -> None:
+
         states = DrivingConstants.kDriveKinematics.toSwerveModuleStates(speeds)
 
         fl, fr, rl, rr = SwerveDrive4Kinematics.desaturateWheelSpeeds(
             states, DrivingConstants.kMaxMetersPerSecond
         )
+        
 
         self.frontLeft.setDesiredState(fl)
         self.frontRight.setDesiredState(fr)

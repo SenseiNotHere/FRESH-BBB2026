@@ -17,7 +17,7 @@ from phoenix6.signals import (
     InvertedValue,
     SensorDirectionValue,
 )
-from phoenix6.controls import VelocityVoltage, PositionVoltage, VelocityTorqueCurrentFOC, MotionMagicTorqueCurrentFOC
+from phoenix6.controls import VelocityTorqueCurrentFOC, MotionMagicTorqueCurrentFOC
 from constants import ModuleConstants
 
 
@@ -92,7 +92,6 @@ class PhoenixSwerveModuleSubsystem(Subsystem):
             .with_k_i(ModuleConstants.kDrivingI)
             .with_k_d(ModuleConstants.kDrivingD)
             .with_k_s(ModuleConstants.kDrivingS)
-            .with_k_v(ModuleConstants.kDrivingV)
         )
         self.drivingMotor.configurator.apply(driveSlot)
 
@@ -116,7 +115,6 @@ class PhoenixSwerveModuleSubsystem(Subsystem):
             .with_k_i(ModuleConstants.kTurningI)
             .with_k_d(ModuleConstants.kTurningD)
             .with_k_s(ModuleConstants.kTurningS)
-            .with_k_v(ModuleConstants.kTurningV)
             .with_k_a(ModuleConstants.kTurningA)
         )
         self.turningMotor.configurator.apply(turnSlot)
@@ -210,19 +208,22 @@ class PhoenixSwerveModuleSubsystem(Subsystem):
     # Control
 
     def setDesiredState(self, desired: SwerveModuleState) -> None:
-        if abs(desired.speed) < 0.005:  # m/s, tune 0.02–0.10
+        if abs(desired.speed) < 0.005:
             desired = SwerveModuleState(0.0, Rotation2d(self.getTurningPosition()))
 
         optimized = self._optimizeState(desired)
 
         driveRps = optimized.speed / self.driveMotorRotToMeters
+
         self.drivingMotor.set_control(
-            self.velocityRequest.with_velocity(driveRps)
+            self.velocityRequest
+            .with_velocity(driveRps)
         )
 
         steerRot = self.steerFusedAngle.to_relative_rotations(
             optimized.angle.radians() / (2 * math.pi)
         )
+
         self.turningMotor.set_control(
             self.positionRequest.with_position(
                 steerRot * ModuleConstants.kTurningMotorReduction

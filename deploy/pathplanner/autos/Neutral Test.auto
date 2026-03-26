@@ -5,15 +5,16 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "DS3-Action1"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "POINT_AND_SHOOT"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "DS 3 Neutral"
+                }
+              }
+            ]
           }
         }
       ]

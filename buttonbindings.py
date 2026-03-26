@@ -75,8 +75,6 @@ class ButtonBindings:
             location=Hub.BLUE_HUB,
             locationIfRed=Hub.RED_HUB
         )
-        shoot_cmd = self.robotContainer.megamente.createStateCommand(RobotState.PREP_SHOT)
-        pulseCmd2 = PulseIntake(self.robotContainer.gulp, deploy_at_end=True)
         pointAndShoot = ParallelCommandGroup(point_cmd)
 
         self.driverController.button(

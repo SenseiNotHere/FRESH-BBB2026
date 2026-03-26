@@ -236,15 +236,15 @@ class ShooterConstants:
     #DISTANCE_TO_RPS.insert(4.49, 63.75)  # NEEDS RETUNING
 
     DISTANCE_TO_RPS = InterpolatingMap()
-    DISTANCE_TO_RPS.insert(1.0, 65.0)  # minimum distance - find this first!
-    DISTANCE_TO_RPS.insert(2.0, 69.0)
-    DISTANCE_TO_RPS.insert(2.5, 73.0)
-    DISTANCE_TO_RPS.insert(3.0, 75.0)
-    DISTANCE_TO_RPS.insert(3.5, 80.0)
-#    DISTANCE_TO_RPS.insert(4.0, 0.0)
-#    DISTANCE_TO_RPS.insert(4.5, 0.0)
-#    DISTANCE_TO_RPS.insert(5.0, 0.0)
-#    DISTANCE_TO_RPS.insert(5.5, 0.0)
+    DISTANCE_TO_RPS.insert(1.0, 48.75)  # minimum distance - find this first!
+    DISTANCE_TO_RPS.insert(2.0, 51.75)
+    DISTANCE_TO_RPS.insert(2.5, 54.75)
+    DISTANCE_TO_RPS.insert(3.0, 56.75)
+    DISTANCE_TO_RPS.insert(3.5, 58.0)
+    DISTANCE_TO_RPS.insert(4.0, 60.0)
+    DISTANCE_TO_RPS.insert(4.5, 63.0)
+    DISTANCE_TO_RPS.insert(5.0, 67.5)
+    DISTANCE_TO_RPS.insert(5.5, 70.5)
 #    DISTANCE_TO_RPS.insert(X.XX, 0.0)  # maximum distance - find this too!x
 
 class IntakeConstants:
