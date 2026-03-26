@@ -19,7 +19,7 @@ class KrakenX60:
 class DrivingConstants:
 
     # Physical Limits
-    kMaxMetersPerSecond = 3.0
+    kMaxMetersPerSecond = 6.0
     kMaxAngularSpeed = math.tau
 
     # Slew Rate Limiting
@@ -185,7 +185,7 @@ class AutoConstants:
 
     kUseSqrtControl = True
 
-    kMaxMetersPerSecond = 1.2
+    kMaxMetersPerSecond = 5.0  # this was meant to be almost as fast as teleop speed limit
     kMaxAccelerationMetersPerSecondSquared = 3.5
 
     kMaxAngularSpeedRadiansPerSecond = 5.0

@@ -69,9 +69,23 @@ class RobotContainer:
 
         print_banner("ROBOT INITIALIZATION STARTING")
 
+        # Controllers
+        log("Robot Container","Initializing Controllers...")
+        self.vroomvroomController = CommandGenericHID(
+            OIConstants.kDriverControllerPort
+        )
+        self.statesideController = CommandGenericHID(
+            OIConstants.kOperatorControllerPort
+        )
+        log("Robot Container","Controllers Initialized!")
+
         # Drive Subsystem
         log("RobotContainer","Initializing DriveSubsystem...")
-        self.vroomvroom = DriveSubsystem()
+
+        def slowdown_when():
+            return 0.5 if self.vroomvroomController.getRawAxis(XboxController.Axis.kLeftTrigger) < 0.5 else 1.0
+
+        self.vroomvroom = DriveSubsystem(maxSpeedScaleFactor=slowdown_when)
 
         if TimedCommandRobot.isSimulation():
             self.vroomvroom.simPhysics = BadSimPhysics(self.vroomvroom, robot)
@@ -83,16 +97,6 @@ class RobotContainer:
         self.testChooser = SendableChooser()
         SmartDashboard.putData("Test Chooser", self.testChooser)
         log("Robot Container","Test Chooser Initialized!")
-
-        # Controllers
-        log("Robot Container","Initializing Controllers...")
-        self.vroomvroomController = CommandGenericHID(
-            OIConstants.kDriverControllerPort
-        )
-        self.statesideController = CommandGenericHID(
-            OIConstants.kOperatorControllerPort
-        )
-        log("Robot Container","Controllers Initialized!")
 
         # Vision / Localization
         log("Robot Container","Initializing Vision...")
