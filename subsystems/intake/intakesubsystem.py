@@ -125,7 +125,7 @@ class IntakeSubsystem(Subsystem):
 
         # Speed Chooser (percent of kIntakeSpeed)
         self.speedChooser = SendableChooser()
-        self.speedChooser.setDefaultOption("5%", 5)
+        self.speedChooser.addOption("5%", 5)
         self.speedChooser.addOption("1%", 1)
         self.speedChooser.addOption("10%", 10)
         self.speedChooser.addOption("15%", 15)
@@ -137,7 +137,7 @@ class IntakeSubsystem(Subsystem):
         self.speedChooser.addOption("45%", 45)
         self.speedChooser.addOption("50%", 50)
         self.speedChooser.addOption("55%", 55)
-        self.speedChooser.addOption("60%", 60)
+        self.speedChooser.setDefaultOption("60%", 60)
         self.speedChooser.addOption("65%", 65)
         self.speedChooser.addOption("70%", 70)
         self.speedChooser.addOption("75%", 75)
@@ -260,8 +260,10 @@ class IntakeSubsystem(Subsystem):
 
     def stop_intake(self):
         self.intakeMotor.set_control(self.intakeRequest.with_velocity(0))
+        SmartDashboard.putNumber("Intake/Intake Velocity", 0)
 
     def stop(self):
+        SmartDashboard.putNumber("Intake/Intake Velocity", 0)
         self.stop_intake()
         self.stop_deploy()
 

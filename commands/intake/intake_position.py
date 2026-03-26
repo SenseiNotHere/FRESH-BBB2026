@@ -25,18 +25,26 @@ class RunIntakeRollers(Command):
 class DoIntake(Command):
     def __init__(self, intake: IntakeSubsystem):
         super().__init__()
+        self.done = False
         self.intake = intake
         self.addRequirements(intake)
         SmartDashboard.putString("DoIntake", "created")
 
+    def execute(self):
+        if self.done:
+            return
+        if self.intake.is_homed():
+            SmartDashboard.putString("DoIntake", "deployed")
+            self.intake.intake()
+            self.intake.deploy()
+            self.done = True
+
     def initialize(self):
         SmartDashboard.putString("DoIntake", "started")
-        self.intake.deploy()
-        self.intake.intake()
+        self.done = False
 
     def end(self, interrupted: bool):
         self.intake.stop_intake()
-        self.intake.stow()
         SmartDashboard.putString("DoIntake", "finished")
 
     def isFinished(self) -> bool:

@@ -92,6 +92,7 @@ class PhoenixSwerveModuleSubsystem(Subsystem):
             .with_k_i(ModuleConstants.kDrivingI)
             .with_k_d(ModuleConstants.kDrivingD)
             .with_k_s(ModuleConstants.kDrivingS)
+            .with_k_v(ModuleConstants.kDrivingV)
         )
         self.drivingMotor.configurator.apply(driveSlot)
 
@@ -116,6 +117,7 @@ class PhoenixSwerveModuleSubsystem(Subsystem):
             .with_k_d(ModuleConstants.kTurningD)
             .with_k_s(ModuleConstants.kTurningS)
             .with_k_a(ModuleConstants.kTurningA)
+            .with_k_v(ModuleConstants.kTurningV)
         )
         self.turningMotor.configurator.apply(turnSlot)
 

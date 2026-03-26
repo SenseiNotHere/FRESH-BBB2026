@@ -9,12 +9,6 @@
           "data": {
             "pathName": "DS3-Action1"
           }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "POINT_AND_SHOOT"
-          }
         }
       ]
     }

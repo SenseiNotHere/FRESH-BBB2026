@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 from xml.dom.minidom import NamedNodeMap
 
-from commands2 import Subsystem, ParallelCommandGroup
+from commands2 import Subsystem, ParallelCommandGroup, WaitCommand
 from wpilib import DriverStation
 
 from pathplannerlib.auto import AutoBuilder, PathPlannerAuto
@@ -11,7 +11,7 @@ from pathplannerlib.auto import NamedCommands, EventTrigger
 
 from wpimath.kinematics import ChassisSpeeds
 
-from commands.drive.point_torwards_location import PointTowardsLocation
+from commands.drive.point_torwards_location import PointTowardsLocation, PointTowardsLocationAuto
 from constants import AutoConstants, Hub
 
 from .drivesubsystem import DriveSubsystem
@@ -28,8 +28,8 @@ if TYPE_CHECKING:
 class AutonomousSubsystem(Subsystem):
     def __init__(
             self,
-            drivetrain: DriveSubsystem,
-            robotContainer: "RobotContainer"
+            drivetrain: DriveSubsystem | None = None,
+            robotContainer: "RobotContainer" = None,
     ):
         """
         Autonomous Subsystem class. Handles all autonomous-related functionality.
@@ -69,23 +69,24 @@ class AutonomousSubsystem(Subsystem):
             location=Hub.BLUE_HUB,
             locationIfRed=Hub.RED_HUB
         )
-        
-        shootCmd = self.superstructure.createStateCommand(RobotState.PREP_SHOT)
-        
-        pointAndShoot = ParallelCommandGroup(point_cmd, shootCmd)
+        shootCmd8s = self.superstructure.createStateCommand(RobotState.PREP_SHOT).alongWith(
+            PointTowardsLocationAuto(
+                drivetrain=self.robotContainer.vroomvroom,
+                location=Hub.BLUE_HUB,
+                locationIfRed=Hub.RED_HUB
+            )
+        ).withTimeout(8.0)
 
-        NamedCommands.registerCommand('PREP_SHOT_COMMAND', self.superstructure.createStateCommand(RobotState.PREP_SHOT))
-        NamedCommands.registerCommand('POINT_AND_SHOOT', pointAndShoot)
-#        NamedCommands.registerCommand('INTAKING', RunIntakeRollers(self.robotContainer.gulp).withTimeout(2.0))
-#        NamedCommands.registerCommand('INTAKE_DEPLOYED', DeployIntake(self.robotContainer.gulp))
-#        NamedCommands.registerCommand('INTAKE_STOWED', StowIntake(self.robotContainer.gulp))
+        NamedCommands.registerCommand('PREP_SHOT_5s', self.superstructure.createStateCommand(RobotState.PREP_SHOT).withTimeout(5.0))
+        NamedCommands.registerCommand('PREP_SHOT_8s', shootCmd8s)
+        NamedCommands.registerCommand('INTAKING', RunIntakeRollers(self.robotContainer.gulp).withTimeout(2.0))
+        NamedCommands.registerCommand('INTAKE_DEPLOYED', DeployIntake(self.robotContainer.gulp))
+        NamedCommands.registerCommand('INTAKE_STOWED', StowIntake(self.robotContainer.gulp))
+        NamedCommands.registerCommand('DO_INTAKE_4s', DoIntake(self.robotContainer.gulp).withTimeout(8.0))
+        NamedCommands.registerCommand('POINT_HUB', WaitCommand(0))
 
     def registerEventTriggers(self):
-        EventTrigger('INTAKE_DEPLOYED').onTrue(DeployIntake(self.robotContainer.gulp))
-        EventTrigger('INTAKE_STOWED').onTrue(StowIntake(self.robotContainer.gulp))
-        EventTrigger('INTAKING').whileTrue(RunIntakeRollers(self.robotContainer.gulp))
-        EventTrigger('DO_INTAKE').whileTrue(DoIntake(self.robotContainer.gulp))
-        EventTrigger('PREP_SHOT').onTrue(self.superstructure.createStateCommand(RobotState.PREP_SHOT))
+        pass
 
     def _driveRobotRelative(self, speeds, feedforwards):
         self.drivetrain.driveRobotRelativeChassisSpeeds(

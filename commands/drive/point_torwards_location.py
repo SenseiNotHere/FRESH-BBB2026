@@ -69,6 +69,11 @@ class PointTowardsLocation(commands2.Command):
                 "command/c" + self.__class__.__name__,
                 "No target location!"
             )
+        else:
+            SmartDashboard.putString(
+                "command/c" + self.__class__.__name__,
+                f"initialized to x, y: {self.activeTargetLocation.x}, {self.activeTargetLocation.y}"
+            )
 
     def execute(self):
         # heading override already in place?
@@ -93,6 +98,9 @@ class PointTowardsLocation(commands2.Command):
     def end(self, interrupted: bool):
         if self.activeTargetLocation is not None:
             self.drivetrain.stopOverrideToFaceThisPoint(self.activeTargetLocation)
+            SmartDashboard.putString(
+                "command/c" + self.__class__.__name__,
+                f"stopped from pointing to x, y: {self.activeTargetLocation.x}, {self.activeTargetLocation.y}")
 
     def isFinished(self) -> bool:
         return False  # never finish, wait for user to stop this command
@@ -113,3 +121,18 @@ class PointTowardsLocation(commands2.Command):
         )
 
         return resolved_value
+
+
+class PointTowardsLocationAuto(PointTowardsLocation):
+    def __init__(
+            self,
+            drivetrain: DriveSubsystem,
+            location: Translation2d | Callable[[], Translation2d | None],
+            locationIfRed: Translation2d | Callable[[], Translation2d | None]
+    ):
+        super().__init__(drivetrain, location, locationIfRed)
+        self.addRequirements(drivetrain)
+
+    def execute(self):
+        super().execute()
+        self.drivetrain.arcadeDrive(0, 0)

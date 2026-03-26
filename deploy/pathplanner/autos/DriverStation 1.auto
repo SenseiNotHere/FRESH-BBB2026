@@ -9,12 +9,6 @@
           "data": {
             "pathName": "DS1-Action1"
           }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "PREP_SHOT"
-          }
         }
       ]
     }

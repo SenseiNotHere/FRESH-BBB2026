@@ -6,6 +6,7 @@ import typing
 import wpilib
 
 from commands2 import Subsystem
+from phoenix6.hardware import Pigeon2
 from wpimath.filter import SlewRateLimiter
 from wpimath.geometry import (
     Pose2d,
@@ -95,7 +96,7 @@ class DriveSubsystem(Subsystem):
         self.overrideControlsToFaceThisPoint: Translation2d | None = None
 
         # Navx SPI gyro
-        self.gyro = NavxGyro()
+        self.gyro = Pigeon2(1)
 
         # another possibility:
         # from phoenix6.hardware import Pigeon2
@@ -311,12 +312,6 @@ class DriveSubsystem(Subsystem):
             norm = math.hypot(xSpeed, ySpeed)
             xSpeed = xSpeed * norm
             ySpeed = ySpeed * norm
-        if (xSpeed != 0 or ySpeed != 0) and self.maxSpeedScaleFactor is not None:
-            norm = math.hypot(xSpeed, ySpeed)
-            scale = abs(self.maxSpeedScaleFactor() / norm)
-            if scale < 1:
-                xSpeed = xSpeed * scale
-                ySpeed = ySpeed * scale
         xSpeedCommanded = xSpeed
         ySpeedCommanded = ySpeed
 
@@ -324,8 +319,13 @@ class DriveSubsystem(Subsystem):
             rot = self.calculateOverrideRotSpeed()
 
         # Convert the commanded speeds into the correct units for the drivetrain
-        xSpeedGoal = xSpeedCommanded * DrivingConstants.kMaxMetersPerSecond
-        ySpeedGoal = ySpeedCommanded * DrivingConstants.kMaxMetersPerSecond
+        maxSpeed = DrivingConstants.kMaxMetersPerSecond
+        if self.maxSpeedScaleFactor is not None:
+            factor: float = self.maxSpeedScaleFactor()
+            maxSpeed *= factor
+
+        xSpeedGoal = xSpeedCommanded * maxSpeed
+        ySpeedGoal = ySpeedCommanded * maxSpeed
         rotSpeedGoal = rot * DrivingConstants.kMaxAngularSpeed
 
         # field relative conversion must happen before rate limiting, since rate limiting is optional
@@ -358,6 +358,10 @@ class DriveSubsystem(Subsystem):
             speeds: ChassisSpeeds,
             feedforwards=None
     ) -> None:
+
+        if self.overrideControlsToFaceThisPoint:
+            rotSpeed = self.calculateOverrideRotSpeed() * DrivingConstants.kMaxAngularSpeed
+            speeds.omega = rotSpeed
 
         states = DrivingConstants.kDriveKinematics.toSwerveModuleStates(speeds)
 

@@ -4,7 +4,7 @@ from wpilib import XboxController
 from commands import ResetXY, ResetSwerveFront, FollowShootHub
 from commands.drive.point_torwards_location import PointTowardsLocation
 from commands.intake.intake_position import StowIntake, DeployIntake, PulseIntake, RunIntakeRollers, \
-    RunIntakeRollersInverse
+    RunIntakeRollersInverse, DoIntake
 from superstructure import RobotState
 
 from constants import Hub
@@ -91,6 +91,13 @@ class ButtonBindings:
         self.operatorController.axisGreaterThan(
             XboxController.Axis.kRightTrigger,
             threshold=0.05
+        ).whileTrue(
+            DoIntake(self.robotContainer.gulp)
+        )
+        
+        # X Button = Run Intake (RunIntakeRollers)
+        self.operatorController.button(
+            XboxController.Button.kX
         ).whileTrue(
             RunIntakeRollers(self.robotContainer.gulp)
         )
