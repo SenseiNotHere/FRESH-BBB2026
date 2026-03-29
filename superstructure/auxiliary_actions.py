@@ -7,7 +7,7 @@ class AuxiliaryActions:
         self.shiftNotifier = ShiftNotifier(driverController)
 
     def update(self):
-        pass
+        self.shiftNotifier.update()
 
 class ShiftNotifier:
     def __init__(self, driverController=None):

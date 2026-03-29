@@ -7,13 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "DS3-Action1"
+            "pathName": "DS2-Action1"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "POINT_AND_SHOOT"
+            "name": "PREP_SHOT_DS2"
           }
         }
       ]

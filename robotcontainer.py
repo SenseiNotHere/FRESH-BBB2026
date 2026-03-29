@@ -112,7 +112,7 @@ class RobotContainer:
 
         self.localizer.addCamera(
             camera=self.lemon,
-            cameraPoseOnRobot=Translation3d(0.051, 0.241, 0.533),
+            cameraPoseOnRobot=Translation3d(-0.051, -0.241, 0.533),
             cameraHeadingOnRobot=Rotation2d.fromDegrees(180),
             minPercentFrame=0.07,
             maxRotationSpeed=720,
@@ -192,6 +192,7 @@ class RobotContainer:
         self.orca = OrchestraSubsystem(
             self.vroomvroom,
             self.pew,
+            self.gulp,
         )
         log("Robot Container","Orchestra Initialized!")
 
@@ -248,12 +249,11 @@ class RobotContainer:
             log("Robot Container","FMS is not attached! Running in practice mode.")
             log("Robot Container","Bobby the B Box II is alive!")
 
-            # Rest of Auto stuff
-            self._lastPreviewedAuto = None
+        # Rest of Auto stuff
+        self._lastPreviewedAuto = None
 
     def updateAutoPreview(self):
         selected = self.autoChooser.getSelected()
-
         if selected != self._lastPreviewedAuto:
             self.autonomousSubsystem.drawAuto(selected.getName())
             self._lastPreviewedAuto = selected

@@ -274,3 +274,6 @@ class IntakeSubsystem(Subsystem):
 
     def is_deployed(self):
         return self._isDeployed
+    
+    def getMotors(self):
+        yield self.intakeMotor

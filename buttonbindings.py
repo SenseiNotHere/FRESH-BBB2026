@@ -82,6 +82,13 @@ class ButtonBindings:
         ).whileTrue(
             pointAndShoot
         )
+        
+        # Agitator Opposite
+        self.driverController.button(
+            XboxController.Button.kY
+        ).whileTrue(
+            self.superstructure.createStateCommand(RobotState.AGITATOR_OPPOSITE)
+        )
 
     # Operator Controls
 
@@ -91,13 +98,6 @@ class ButtonBindings:
         self.operatorController.axisGreaterThan(
             XboxController.Axis.kRightTrigger,
             threshold=0.05
-        ).whileTrue(
-            DoIntake(self.robotContainer.gulp)
-        )
-        
-        # X Button = Run Intake (RunIntakeRollers)
-        self.operatorController.button(
-            XboxController.Button.kX
         ).whileTrue(
             RunIntakeRollers(self.robotContainer.gulp)
         )

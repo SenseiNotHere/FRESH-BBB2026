@@ -5,35 +5,15 @@
     "data": {
       "commands": [
         {
-          "type": "deadline",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "DS 3 Neutral"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "DO_INTAKE_4s"
-                }
-              }
-            ]
+            "pathName": "DS 3 Neutral"
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "PREP_SHOT_8s"
-                }
-              }
-            ]
+            "name": "POINT_AND_SHOOT"
           }
         }
       ]

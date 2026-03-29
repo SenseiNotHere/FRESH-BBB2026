@@ -131,7 +131,9 @@ class Superstructure(SuperstructureStates, SuperstructureHelpers):
             RobotState.PLAYING_CHAMPIONSHIP_SONG: self._handle_playing_championship_song,
 
             # Misc
-            RobotState.PASSING_FUEL: self._handle_passing_fuel
+            RobotState.PASSING_FUEL: self._handle_passing_fuel,
+            
+            RobotState.AGITATOR_OPPOSITE: self._handle_agitator_reverse
         }
 
         # Internal Timing / Debounce

@@ -11,6 +11,7 @@ from phoenix6.configs import (
     CANcoderConfiguration,
     CurrentLimitsConfigs,
     Slot0Configs,
+    Slot1Configs
 )
 from phoenix6.signals import (
     NeutralModeValue,
@@ -94,6 +95,7 @@ class PhoenixSwerveModuleSubsystem(Subsystem):
             .with_k_s(ModuleConstants.kDrivingS)
             .with_k_v(ModuleConstants.kDrivingV)
         )
+        
         self.drivingMotor.configurator.apply(driveSlot)
 
         # Turn Motor Config

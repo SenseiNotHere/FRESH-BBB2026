@@ -75,6 +75,12 @@ class SuperstructureStates:
         else:
             self._stop_feeders()
 
+    def _handle_agitator_reverse(self: "Superstructure"):
+        if not self.hasAgitator:
+            return
+
+        self.agitator.reverse()
+
     # Start song on entry
     def _handle_playing_song(self: "Superstructure"):
         """

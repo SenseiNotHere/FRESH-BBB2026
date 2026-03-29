@@ -4,24 +4,24 @@
     {
       "anchor": {
         "x": 4.0,
-        "y": 7.45
+        "y": 0.6
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0432921348314603,
-        "y": 7.581471910112359
+        "x": 2.7158981648056084,
+        "y": 0.6923384193082369
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.0840561797752803,
-        "y": 4.5649325842696635
+        "x": 1.992,
+        "y": 1.762
       },
       "prevControl": {
-        "x": 1.2076292134831457,
-        "y": 6.236258426966292
+        "x": 2.3894494382022464,
+        "y": 0.7632808988764052
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,7 +31,14 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "DEPLOY_INTAKE",
+      "waypointRelativePos": 0.4,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 2.0,
     "maxAcceleration": 2.0,
@@ -42,10 +49,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 162.71850162818345
+    "rotation": -155.0
   },
   "reversed": false,
-  "folder": "DS 1",
+  "folder": "DS 3",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0

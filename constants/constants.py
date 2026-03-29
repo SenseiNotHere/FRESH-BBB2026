@@ -19,7 +19,8 @@ class KrakenX60:
 class DrivingConstants:
 
     # Physical Limits
-    kMaxMetersPerSecond = 2.0
+    kMaxMetersPerSecond = 6.0
+
     kMaxAngularSpeed = math.tau
 
     # Slew Rate Limiting
@@ -266,11 +267,11 @@ class IntakeConstants:
     kDeployMaxOutput = 1.0
 
     # Positions (rotations)
-    kDeployPosition = 18.0
+    kDeployPosition = 18.5
     kStowPosition = 1.0
 
     # Homing
-    kHomeSpeed = 0.2
+    kHomeSpeed = 0.1
 
     # Anti-jam (position wiggle)
     kPulsePosition = 12.0

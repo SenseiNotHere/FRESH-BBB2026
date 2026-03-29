@@ -49,6 +49,7 @@ class OrchestraSubsystem(Subsystem):
         for subsystem in (
             driveSubsystem,
             shooterSubsystem,
+            intakeSubsystem,
         ):
             if subsystem is None:
                 continue
