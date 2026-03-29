@@ -211,8 +211,8 @@ class PhoenixSwerveModuleSubsystem(Subsystem):
 
     # Control
 
-    def setDesiredState(self, desired: SwerveModuleState) -> None:
-        if abs(desired.speed) < 0.005:
+    def setDesiredState(self, desired: SwerveModuleState, overrideAngleStop: bool = False) -> None:
+        if abs(desired.speed) < 0.005 and not overrideAngleStop:
             desired = SwerveModuleState(0.0, Rotation2d(self.getTurningPosition()))
 
         optimized = self._optimizeState(desired)

@@ -377,12 +377,10 @@ class DriveSubsystem(Subsystem):
 
     def setX(self) -> None:
         """Sets the wheels into an X formation to prevent movement."""
-        self.frontLeft.setDesiredState(SwerveModuleState(0, Rotation2d.fromDegrees(45)))
-        self.frontRight.setDesiredState(
-            SwerveModuleState(0, Rotation2d.fromDegrees(-45))
-        )
-        self.backLeft.setDesiredState(SwerveModuleState(0, Rotation2d.fromDegrees(-45)))
-        self.backRight.setDesiredState(SwerveModuleState(0, Rotation2d.fromDegrees(45)))
+        self.frontLeft.setDesiredState(SwerveModuleState(0, Rotation2d.fromDegrees(45)), True)
+        self.frontRight.setDesiredState(SwerveModuleState(0, Rotation2d.fromDegrees(-45)), True)
+        self.backLeft.setDesiredState(SwerveModuleState(0, Rotation2d.fromDegrees(-45)), True)
+        self.backRight.setDesiredState(SwerveModuleState(0, Rotation2d.fromDegrees(45)), True)
 
     def setModuleStates(
             self,

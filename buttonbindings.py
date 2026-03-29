@@ -1,4 +1,4 @@
-from commands2 import InstantCommand, ParallelCommandGroup
+from commands2 import InstantCommand, ParallelCommandGroup, RunCommand
 from wpilib import XboxController
 
 from commands import ResetXY, ResetSwerveFront, FollowShootHub
@@ -51,8 +51,10 @@ class ButtonBindings:
         )
         
         # X-Break
-        self.driverController.pov(270).whileTrue(
-            InstantCommand(self.drivetrain.setX, self.drivetrain)
+        self.driverController.button(
+            XboxController.Button.kB
+        ).whileTrue(
+            RunCommand(self.drivetrain.setX, self.drivetrain)
         )
 
         # Shooter
