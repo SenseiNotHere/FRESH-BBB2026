@@ -78,7 +78,7 @@ class AutonomousSubsystem(Subsystem):
         ).withTimeout(6.0)
         pointAndShoot = SequentialCommandGroup(point_cmd2s, shootCmd6s)
         # General
-        NamedCommands.registerCommand('DEPLOY_INTAKE', DeployIntake(self.robotContainer.gulp))
+#        NamedCommands.registerCommand('DEPLOY_INTAKE', DeployIntake(self.robotContainer.gulp))
         NamedCommands.registerCommand('POINT_AND_SHOOT', pointAndShoot)
         
         # Driver Station 2
@@ -93,7 +93,7 @@ class AutonomousSubsystem(Subsystem):
         
     def registerEventTriggers(self):
         EventTrigger('DEPLOY_INTAKE').onTrue(DeployIntake(self.robotContainer.gulp))
-        EventTrigger('INTAKING_DS2_NEUTRAL').whileTrue(RunIntakeRollers(self.robotContainer.gulp))
+        EventTrigger('INTAKING').whileTrue(RunIntakeRollers(self.robotContainer.gulp))
 
     def _driveRobotRelative(self, speeds, feedforwards):
         self.drivetrain.driveRobotRelativeChassisSpeeds(

@@ -9,6 +9,18 @@
           "data": {
             "pathName": "DS 3 Neutral"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "DS 3 Neutral 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "POINT_AND_SHOOT"
+          }
         }
       ]
     }

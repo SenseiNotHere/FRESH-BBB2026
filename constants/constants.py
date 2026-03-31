@@ -19,7 +19,7 @@ class KrakenX60:
 class DrivingConstants:
 
     # Physical Limits
-    kMaxMetersPerSecond = 6.0
+    kMaxMetersPerSecond = 2.0 #6.0
 
     kMaxAngularSpeed = math.tau
 
@@ -111,14 +111,14 @@ class ModuleConstants:
     kDrivingV = 0.124
     kDriveAcceleration = 250.0
 
-    kDrivingAutoP = 1.0
+    kDrivingAutoP = 3.5
     kDrivingAutoI = 0.0
     kDrivingAutoD = 0.0
     kDrivingAutoS = 0.0
     kDrivingAutoV = 0.124
 
     # Turning PID + FF
-    kTurningP = 8.0
+    kTurningP = 5.0
     kTurningI = 0.0
     kTurningD = 0.0
     kTurningS = 0.0
@@ -190,7 +190,7 @@ class AutoConstants:
     kMaxAngularSpeedRadiansPerSecond = 5.0
     kMaxAngularSpeedRadiansPerSecondSquared = 25.0
 
-    kPController = 1.0
+    kPController = 3.5
     kPThetaController = 0.5
 
     kIXController = 0.0
@@ -252,14 +252,14 @@ class IntakeConstants:
     kDeployMaxOutput = 1.0
 
     # Positions (rotations)
-    kDeployPosition = 18.5
+    kDeployPosition = 17.0
     kStowPosition = 1.0
 
     # Homing
     kHomeSpeed = 0.1
 
     # Anti-jam (position wiggle)
-    kPulsePosition = 12.0
+    kPulsePosition = 9.0
 
     # Rollers (TalonFX)
     
