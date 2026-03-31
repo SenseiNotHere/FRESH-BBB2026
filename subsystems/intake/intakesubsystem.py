@@ -184,6 +184,7 @@ class IntakeSubsystem(Subsystem):
         #     self._isDeployed = True
         #     return
         if self.reverse_limit_pressed():
+            self.deployMotor.set(0)
             self._sync_to_stow()
             return
 
