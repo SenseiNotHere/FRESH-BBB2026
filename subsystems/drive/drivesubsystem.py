@@ -356,7 +356,8 @@ class DriveSubsystem(Subsystem):
     def driveRobotRelativeChassisSpeeds(
             self,
             speeds: ChassisSpeeds,
-            feedforwards=None
+            feedforwards=None,
+            autoSlot : bool = False,
     ) -> None:
 
         if self.overrideControlsToFaceThisPoint:
@@ -368,12 +369,11 @@ class DriveSubsystem(Subsystem):
         fl, fr, rl, rr = SwerveDrive4Kinematics.desaturateWheelSpeeds(
             states, DrivingConstants.kMaxMetersPerSecond
         )
-        
 
-        self.frontLeft.setDesiredState(fl)
-        self.frontRight.setDesiredState(fr)
-        self.backLeft.setDesiredState(rl)
-        self.backRight.setDesiredState(rr)
+        self.frontLeft.setDesiredState(fl, autoSlot)
+        self.frontRight.setDesiredState(fr, autoSlot)
+        self.backLeft.setDesiredState(rl, autoSlot)
+        self.backRight.setDesiredState(rr, autoSlot)
 
     def setX(self) -> None:
         """Sets the wheels into an X formation to prevent movement."""

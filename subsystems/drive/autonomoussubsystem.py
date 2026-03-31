@@ -98,7 +98,8 @@ class AutonomousSubsystem(Subsystem):
     def _driveRobotRelative(self, speeds, feedforwards):
         self.drivetrain.driveRobotRelativeChassisSpeeds(
             ChassisSpeeds(speeds.vx, speeds.vy, -speeds.omega),
-            feedforwards
+            feedforwards,
+            True
         )
         
     def _getRobotRelativeSpeeds(self):

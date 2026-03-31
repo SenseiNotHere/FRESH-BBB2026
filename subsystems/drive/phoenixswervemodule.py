@@ -98,6 +98,17 @@ class PhoenixSwerveModuleSubsystem(Subsystem):
         
         self.drivingMotor.configurator.apply(driveSlot)
 
+        driveSlot1 = Slot1Configs()
+        (
+            driveSlot1
+            .with_k_p(ModuleConstants.kDrivingAutoP)
+            .with_k_i(ModuleConstants.kDrivingAutoI)
+            .with_k_d(ModuleConstants.kDrivingAutoD)
+            .with_k_s(ModuleConstants.kDrivingAutoS)
+            .with_k_v(ModuleConstants.kDrivingAutoV)
+        )
+        self.drivingMotor.configurator.apply(driveSlot1)
+
         # Turn Motor Config
         turnConfig = TalonFXConfiguration()
         turnConfig.motor_output.neutral_mode = NeutralModeValue.BRAKE
@@ -149,6 +160,7 @@ class PhoenixSwerveModuleSubsystem(Subsystem):
         self.velocityRequest = velocityVoltageFOC.with_slot(0)
         motionMagicPositonFOC = MotionMagicTorqueCurrentFOC(0)
         self.positionRequest = motionMagicPositonFOC.with_slot(0)
+        self.velocityRequestAuto = velocityVoltageFOC.with_slot(1)
 
         # Init State
         self.resetEncoders()
@@ -211,18 +223,25 @@ class PhoenixSwerveModuleSubsystem(Subsystem):
 
     # Control
 
-    def setDesiredState(self, desired: SwerveModuleState) -> None:
+    def setDesiredState(self, desired: SwerveModuleState, auto_slot: bool = False) -> None:
         if abs(desired.speed) < 0.005:
             desired = SwerveModuleState(0.0, Rotation2d(self.getTurningPosition()))
+
 
         optimized = self._optimizeState(desired)
 
         driveRps = optimized.speed / self.driveMotorRotToMeters
 
-        self.drivingMotor.set_control(
-            self.velocityRequest
-            .with_velocity(driveRps)
-        )
+        if auto_slot:
+            self.drivingMotor.set_control(
+                self.velocityRequestAuto
+                .with_velocity(driveRps)
+            )
+        else:
+            self.drivingMotor.set_control(
+                self.velocityRequest
+                .with_velocity(driveRps)
+            )
 
         steerRot = self.steerFusedAngle.to_relative_rotations(
             optimized.angle.radians() / (2 * math.pi)

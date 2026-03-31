@@ -4,56 +4,56 @@
     {
       "anchor": {
         "x": 4.0,
-        "y": 0.6
+        "y": 7.45
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.438683242786384,
-        "y": 0.6
+        "x": 4.25,
+        "y": 7.45
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.415235955056179,
-        "y": 0.6
+        "x": 6.241988764044943,
+        "y": 7.336887640449438
       },
       "prevControl": {
-        "x": 5.600484664097526,
-        "y": 0.5790766136206389
+        "x": 4.9344721855493034,
+        "y": 7.515185355698844
       },
       "nextControl": {
-        "x": 7.467483681158289,
-        "y": 0.6270224619271647
+        "x": 6.914595505617978,
+        "y": 7.245168539325842
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.382101123595504,
-        "y": 0.7230438762290179
+        "x": 8.738786516853931,
+        "y": 6.949629213483146
       },
       "prevControl": {
-        "x": 8.199498055542833,
-        "y": 0.5522922450867314
+        "x": 8.738786516853931,
+        "y": 7.199629213483146
       },
       "nextControl": {
-        "x": 9.490451501214912,
-        "y": 1.7594592928697366
+        "x": 8.738786516853931,
+        "y": 4.818513559935251
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.728595505617978,
-        "y": 5.645179775280899
+        "x": 8.738786516853931,
+        "y": 2.0885168539325845
       },
       "prevControl": {
-        "x": 8.743051020919738,
-        "y": 5.323266647147767
+        "x": 8.738786516853931,
+        "y": 2.7611235955056177
       },
       "nextControl": null,
       "isLocked": false,
@@ -67,8 +67,8 @@
   "globalConstraints": {
     "maxVelocity": 6.0,
     "maxAcceleration": 6.0,
-    "maxAngularVelocity": 100.0,
-    "maxAngularAcceleration": 100.0,
+    "maxAngularVelocity": 720.0,
+    "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
@@ -77,7 +77,7 @@
     "rotation": -90.0
   },
   "reversed": false,
-  "folder": "DS 3 Neutral",
+  "folder": "DS 1 Neutral",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0
