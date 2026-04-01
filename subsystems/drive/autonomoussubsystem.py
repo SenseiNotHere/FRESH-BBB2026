@@ -34,7 +34,7 @@ class AutonomousSubsystem(Subsystem):
         """
         Autonomous Subsystem class. Handles all autonomous-related functionality.
         This is a singleton class. Meaning there should only ever be one instance of this class.
-        
+
         :param drivetrain: The drivetrain subsystem.
         :param robotContainer: The robot container.
         """
@@ -78,30 +78,29 @@ class AutonomousSubsystem(Subsystem):
         ).withTimeout(6.0)
         pointAndShoot = SequentialCommandGroup(point_cmd2s, shootCmd6s)
         # General
-#        NamedCommands.registerCommand('DEPLOY_INTAKE', DeployIntake(self.robotContainer.gulp))
+        NamedCommands.registerCommand('DEPLOY_INTAKE', DeployIntake(self.robotContainer.gulp))
         NamedCommands.registerCommand('POINT_AND_SHOOT', pointAndShoot)
-        
+
         # Driver Station 2
         pointToHub = PointTowardsLocationAuto(
             drivetrain=self.robotContainer.vroomvroom,
             location=Hub.BLUE_HUB,
             locationIfRed=Hub.RED_HUB
         ).withTimeout(4.0)
+        shootCmdDS2 = self.superstructure.createStateCommand(RobotState.PREP_SHOT).withTimeout(8.0)
         pulseCmd = PulseIntake(self.robotContainer.gulp, deploy_at_end=True)
-        shootCmdDS2 = (self.superstructure.createStateCommand(RobotState.PREP_SHOT).alongWith(pulseCmd)).withTimeout(8.0)
-        NamedCommands.registerCommand('PREP_SHOT_DS2', pointToHub.andThen(shootCmdDS2))
-        
+        NamedCommands.registerCommand('PREP_SHOT_DS2', pointToHub.andThen(shootCmdDS2.alongWith(pulseCmd)))
+
     def registerEventTriggers(self):
         EventTrigger('DEPLOY_INTAKE').onTrue(DeployIntake(self.robotContainer.gulp))
-        EventTrigger('INTAKING').whileTrue(RunIntakeRollers(self.robotContainer.gulp))
+        EventTrigger('INTAKING_DS2_NEUTRAL').whileTrue(RunIntakeRollers(self.robotContainer.gulp))
 
     def _driveRobotRelative(self, speeds, feedforwards):
         self.drivetrain.driveRobotRelativeChassisSpeeds(
             ChassisSpeeds(speeds.vx, speeds.vy, -speeds.omega),
-            feedforwards,
-            True
+            feedforwards
         )
-        
+
     def _getRobotRelativeSpeeds(self):
         return self.drivetrain.getRobotRelativeSpeeds()
 
@@ -127,7 +126,7 @@ class AutonomousSubsystem(Subsystem):
             self.drivetrain.field.getObject("Auto Path").setPoses(poses)
 
         except Exception as e:
-            log("Autonomous",f"Failed to draw auto '{autoName}': {e}")
+            log("Autonomous", f"Failed to draw auto '{autoName}': {e}")
 
     def clearAutoPreview(self):
         self.drivetrain.field.getObject("Auto Path").setPoses([])

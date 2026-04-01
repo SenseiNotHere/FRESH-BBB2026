@@ -3,6 +3,7 @@ from wpilib import Timer, SmartDashboard
 
 from subsystems.intake.intakesubsystem import IntakeSubsystem
 
+
 class RunIntakeRollers(Command):
     def __init__(self, intake: IntakeSubsystem):
         super().__init__()
@@ -13,7 +14,7 @@ class RunIntakeRollers(Command):
         print("RunIntakeRollers initialized")
         SmartDashboard.putString("RunIntakeRollers", "started")
         self.intake.intake()
-    
+
     def end(self, interrupted: bool):
         print("RunIntakeRollers ended")
         self.intake.stop_intake()
@@ -21,6 +22,7 @@ class RunIntakeRollers(Command):
 
     def isFinished(self) -> bool:
         return False
+
 
 class DoIntake(Command):
     def __init__(self, intake: IntakeSubsystem):
@@ -50,44 +52,48 @@ class DoIntake(Command):
     def isFinished(self) -> bool:
         return False
 
+
 class StartIntakeRollers(Command):
     def __init__(self, intake: IntakeSubsystem):
         super().__init__()
         self.intake = intake
         self.addRequirements(intake)
-        
+
     def initialize(self):
         self.intake.intake()
-        
+
     def isFinished(self) -> bool:
         return True
-    
+
+
 class StopIntakeRollers(Command):
     def __init__(self, intake: IntakeSubsystem):
         super().__init__()
         self.intake = intake
         self.addRequirements(intake)
-        
+
     def initialize(self):
         self.intake.stop_intake()
-    
+
     def isFinished(self) -> bool:
         return True
+
 
 class RunIntakeRollersInverse(Command):
     def __init__(self, intake: IntakeSubsystem):
         super().__init__()
         self.intake = intake
         self.addRequirements(intake)
-    
+
     def initialize(self):
         self.intake.intake_reverse()
-        
+
     def end(self, interrupted: bool):
         self.intake.stop_intake()
-        
+
     def isFinished(self) -> bool:
         return False
+
 
 class DeployIntake(Command):
 
