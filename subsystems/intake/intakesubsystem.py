@@ -163,7 +163,8 @@ class IntakeSubsystem(Subsystem):
         self.deployEncoder.setPosition(target_position)
 
     def _sync_to_stow(self):
-        self._sync_encoders(IntakeConstants.kStowPosition)
+        if not self._homed:
+            self._sync_encoders(IntakeConstants.kStowPosition)
         self._homed = True
         self._isDeployed = False
 
