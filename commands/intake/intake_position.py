@@ -3,7 +3,6 @@ from wpilib import Timer, SmartDashboard
 
 from subsystems.intake.intakesubsystem import IntakeSubsystem
 
-
 class RunIntakeRollers(Command):
     def __init__(self, intake: IntakeSubsystem):
         super().__init__()
@@ -14,7 +13,7 @@ class RunIntakeRollers(Command):
         print("RunIntakeRollers initialized")
         SmartDashboard.putString("RunIntakeRollers", "started")
         self.intake.intake()
-
+    
     def end(self, interrupted: bool):
         print("RunIntakeRollers ended")
         self.intake.stop_intake()
@@ -22,7 +21,6 @@ class RunIntakeRollers(Command):
 
     def isFinished(self) -> bool:
         return False
-
 
 class DoIntake(Command):
     def __init__(self, intake: IntakeSubsystem):
@@ -52,48 +50,44 @@ class DoIntake(Command):
     def isFinished(self) -> bool:
         return False
 
-
 class StartIntakeRollers(Command):
     def __init__(self, intake: IntakeSubsystem):
         super().__init__()
         self.intake = intake
         self.addRequirements(intake)
-
+        
     def initialize(self):
         self.intake.intake()
-
+        
     def isFinished(self) -> bool:
         return True
-
-
+    
 class StopIntakeRollers(Command):
     def __init__(self, intake: IntakeSubsystem):
         super().__init__()
         self.intake = intake
         self.addRequirements(intake)
-
+        
     def initialize(self):
         self.intake.stop_intake()
-
+    
     def isFinished(self) -> bool:
         return True
-
 
 class RunIntakeRollersInverse(Command):
     def __init__(self, intake: IntakeSubsystem):
         super().__init__()
         self.intake = intake
         self.addRequirements(intake)
-
+    
     def initialize(self):
         self.intake.intake_reverse()
-
+        
     def end(self, interrupted: bool):
         self.intake.stop_intake()
-
+        
     def isFinished(self) -> bool:
         return False
-
 
 class DeployIntake(Command):
 
@@ -101,7 +95,6 @@ class DeployIntake(Command):
         super().__init__()
         self.intake = intake
         self.done = False
-        self.addRequirements(intake)
         SmartDashboard.putString("DeployIntake", "created")
 
     def initialize(self):
@@ -169,5 +162,37 @@ class PulseIntake(Command):
             self.intake.stow()
         self.intake.stop_intake()
 
+    def isFinished(self) -> bool:
+        return False
+
+class AutoPulseAndShoot(Command):
+    def __init__(self, intake: IntakeSubsystem, deploy_at_end: bool):
+        super().__init__()
+
+        self.intake = intake
+        self.addRequirements(intake)
+        self.deploy_at_end = deploy_at_end
+        self.start_time = 0
+
+    def initialize(self):
+        Timer.getFPGATimestamp() - self.start_time
+
+    def execute(self):
+        t = Timer.getFPGATimestamp() - self.start_time
+        phase = (t % 3.0) > 1.5
+        if phase:
+            self.intake.intake()
+            self.intake.go_to_pulse_position()
+        else:
+            self.intake.stop_intake()
+            self.intake.deploy()
+
+    def end(self, interrupted: bool):
+        if self.deploy_at_end:
+            self.intake.deploy()
+        else:
+            self.intake.stow()
+        self.intake.stop_intake()
+        
     def isFinished(self) -> bool:
         return False

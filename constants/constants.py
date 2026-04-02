@@ -19,7 +19,7 @@ class KrakenX60:
 class DrivingConstants:
 
     # Physical Limits
-    kMaxMetersPerSecond = 2.0 #6.0
+    kMaxMetersPerSecond = 6.0
 
     kMaxAngularSpeed = math.tau
 

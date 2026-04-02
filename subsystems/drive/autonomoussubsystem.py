@@ -68,13 +68,13 @@ class AutonomousSubsystem(Subsystem):
             drivetrain=self.robotContainer.vroomvroom,
             location=Hub.BLUE_HUB,
             locationIfRed=Hub.RED_HUB
-        ).withTimeout(2.0)
+        ).withTimeout(1.5)
         shootCmd6s = self.superstructure.createStateCommand(RobotState.PREP_SHOT).alongWith(
             PointTowardsLocationAuto(
                 drivetrain=self.robotContainer.vroomvroom,
                 location=Hub.BLUE_HUB,
                 locationIfRed=Hub.RED_HUB
-            )
+            ), PulseIntake(self.robotContainer.gulp, True)
         ).withTimeout(6.0)
         pointAndShoot = SequentialCommandGroup(point_cmd2s, shootCmd6s)
         # General
@@ -93,6 +93,7 @@ class AutonomousSubsystem(Subsystem):
 
     def registerEventTriggers(self):
         EventTrigger('DEPLOY_INTAKE').onTrue(DeployIntake(self.robotContainer.gulp))
+        EventTrigger('INTAKING').whileTrue(RunIntakeRollers(self.robotContainer.gulp))
         EventTrigger('INTAKING_DS2_NEUTRAL').whileTrue(RunIntakeRollers(self.robotContainer.gulp))
 
     def _driveRobotRelative(self, speeds, feedforwards):
