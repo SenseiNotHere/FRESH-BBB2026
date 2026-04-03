@@ -68,7 +68,7 @@ class AutonomousSubsystem(Subsystem):
             drivetrain=self.robotContainer.vroomvroom,
             location=Hub.BLUE_HUB,
             locationIfRed=Hub.RED_HUB
-        ).withTimeout(1.5)
+        ).withTimeout(1.0)
         shootCmd6s = self.superstructure.createStateCommand(RobotState.PREP_SHOT).alongWith(
             PointTowardsLocationAuto(
                 drivetrain=self.robotContainer.vroomvroom,
@@ -86,7 +86,7 @@ class AutonomousSubsystem(Subsystem):
             drivetrain=self.robotContainer.vroomvroom,
             location=Hub.BLUE_HUB,
             locationIfRed=Hub.RED_HUB
-        ).withTimeout(4.0)
+        ).withTimeout(1.0)
         shootCmdDS2 = self.superstructure.createStateCommand(RobotState.PREP_SHOT).withTimeout(8.0)
         pulseCmd = PulseIntake(self.robotContainer.gulp, deploy_at_end=True)
         NamedCommands.registerCommand('PREP_SHOT_DS2', pointToHub.andThen(shootCmdDS2.alongWith(pulseCmd)))
