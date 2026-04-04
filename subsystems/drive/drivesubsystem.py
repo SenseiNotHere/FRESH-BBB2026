@@ -348,10 +348,10 @@ class DriveSubsystem(Subsystem):
         fl, fr, rl, rr = SwerveDrive4Kinematics.desaturateWheelSpeeds(
             swerveModuleStates, DrivingConstants.kMaxMetersPerSecond
         )
-        self.frontLeft.setDesiredState(fl)
-        self.frontRight.setDesiredState(fr)
-        self.backLeft.setDesiredState(rl)
-        self.backRight.setDesiredState(rr)
+        self.frontLeft.setDesiredState(fl, False)
+        self.frontRight.setDesiredState(fr, False)
+        self.backLeft.setDesiredState(rl, False)
+        self.backRight.setDesiredState(rr, False)
 
     def driveRobotRelativeChassisSpeeds(
             self,

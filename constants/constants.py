@@ -253,7 +253,7 @@ class IntakeConstants:
     kDeployMaxOutput = 1.0
 
     # Positions (rotations)
-    kDeployPosition = 18.0
+    kDeployPosition = 18.4
     kStowPosition = 1.0
 
     # Homing
