@@ -40,7 +40,7 @@ U_TURN = Rotation2d.fromDegrees(180)
 
 
 class DriveSubsystem(Subsystem):
-    def __init__(self, maxSpeedScaleFactor=None) -> None:
+    def __init__(self, maxSpeedScaleFactor: typing.Callable[[], float] | None = None) -> None:
         super().__init__()
 
         if maxSpeedScaleFactor is not None:
@@ -122,7 +122,7 @@ class DriveSubsystem(Subsystem):
         self.field = Field2d()
         SmartDashboard.putData("Field", self.field)
 
-        self.simPhysics = None
+        self.simPhysics: typing.Optional[BadSimPhysics] = None
 
         self.alliance = None
         self.allianceOverride = SendableChooser()
@@ -188,10 +188,10 @@ class DriveSubsystem(Subsystem):
         SmartDashboard.putNumber("Drivetrain/Heading (deg)", pose.rotation().degrees())
 
         # Temperatures
-        SmartDashboard.putNumberArray("FL Module/Front Left Temp", self.frontLeft.getTemperature())
-        SmartDashboard.putNumberArray("FR Module/Front Right Temp", self.frontRight.getTemperature())
-        SmartDashboard.putNumberArray("BL Module/Back Left Temp", self.backLeft.getTemperature())
-        SmartDashboard.putNumberArray("BR Module/Back Right Temp", self.backRight.getTemperature())
+        SmartDashboard.putNumberArray("FL Module/Front Left Temp", list(self.frontLeft.getTemperature()))
+        SmartDashboard.putNumberArray("FR Module/Front Right Temp", list(self.frontRight.getTemperature()))
+        SmartDashboard.putNumberArray("BL Module/Back Left Temp", list(self.backLeft.getTemperature()))
+        SmartDashboard.putNumberArray("BR Module/Back Right Temp", list(self.backRight.getTemperature()))
 
         # Positions
         SmartDashboard.putNumber("FL Module/Front Left Position", self.frontLeft.getPosition().angle.degrees())
@@ -321,8 +321,7 @@ class DriveSubsystem(Subsystem):
         # Convert the commanded speeds into the correct units for the drivetrain
         maxSpeed = DrivingConstants.kMaxMetersPerSecond
         if self.maxSpeedScaleFactor is not None:
-            factor: float = self.maxSpeedScaleFactor()
-            maxSpeed *= factor
+            maxSpeed *= self.maxSpeedScaleFactor()
 
         xSpeedGoal = xSpeedCommanded * maxSpeed
         ySpeedGoal = ySpeedCommanded * maxSpeed
@@ -479,6 +478,9 @@ class DriveSubsystem(Subsystem):
 
     def calculateOverrideRotSpeed(self):
         # 1. how many degrees we need to turn?
+        if self.overrideControlsToFaceThisPoint is None:
+            return 0.0
+        
         pose = self.getPose()
         shooterPointingHere = pose.rotation() + U_TURN
         vectorToTarget = self.overrideControlsToFaceThisPoint - pose.translation()
