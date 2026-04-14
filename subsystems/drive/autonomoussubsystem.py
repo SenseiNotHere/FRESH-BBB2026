@@ -8,28 +8,27 @@ from pathplannerlib.auto import AutoBuilder, PathPlannerAuto
 from pathplannerlib.controller import PPHolonomicDriveController
 from pathplannerlib.config import PIDConstants
 from pathplannerlib.auto import NamedCommands, EventTrigger
+from pathplannerlib.util import FlippingUtil
 
 from wpimath.kinematics import ChassisSpeeds
 
-from commands.drive.point_torwards_location import PointTowardsLocation, PointTowardsLocationAuto
 from constants import AutoConstants, Hub
 
 from .drivesubsystem import DriveSubsystem
-from superstructure import Superstructure, RobotState, RobotReadiness
-
 from utils import log
 
 from commands.intake.intake_position import DeployIntake, StowIntake, RunIntakeRollers, DoIntake, PulseIntake
 
 if TYPE_CHECKING:
     from robotcontainer import RobotContainer
+    from superstructure import Superstructure
 
 
 class AutonomousSubsystem(Subsystem):
     def __init__(
             self,
-            drivetrain: DriveSubsystem | None = None,
-            robotContainer: "RobotContainer" = None,
+            drivetrain: DriveSubsystem,
+            robotContainer: "RobotContainer"
     ):
         """
         Autonomous Subsystem class. Handles all autonomous-related functionality.
@@ -63,6 +62,8 @@ class AutonomousSubsystem(Subsystem):
         )
 
     def registerNamedCommands(self):
+        from commands.drive.point_torwards_location import PointTowardsLocationAuto
+        from superstructure import RobotState
 
         point_cmd2s = PointTowardsLocationAuto(
             drivetrain=self.robotContainer.vroomvroom,
@@ -115,6 +116,7 @@ class AutonomousSubsystem(Subsystem):
         alliance = self.drivetrain.getAlliance()
         return alliance == DriverStation.Alliance.kRed
 
+
     def drawAuto(self, autoName: str):
         if not autoName:
             return
@@ -123,6 +125,9 @@ class AutonomousSubsystem(Subsystem):
             paths = PathPlannerAuto.getPathGroupFromAutoFile(autoName)
 
             poses = [pose for path in paths for pose in path.getPathPoses()]
+
+            if self.shouldFlipPath():
+                poses = [FlippingUtil.flipFieldPose(pose) for pose in poses]
 
             self.drivetrain.field.getObject("Auto Path").setPoses(poses)
 

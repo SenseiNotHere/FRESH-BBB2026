@@ -7,8 +7,8 @@ import math
 
 import commands2
 
-from commands import AimToDirection, AimToDirectionConstants
-from commands import GoToPointConstants
+from commands.drive.aim_to_direction import AimToDirection, AimToDirectionConstants
+from commands.drive.go_to_point import GoToPointConstants
 
 from subsystems import DriveSubsystem
 from wpimath.geometry import Rotation2d

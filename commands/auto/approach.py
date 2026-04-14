@@ -10,8 +10,8 @@ import math
 import commands2
 import typing
 
-from commands import AimToDirectionConstants
-from commands import GoToPointConstants
+from commands.drive.aim_to_direction import AimToDirectionConstants
+from commands.drive.go_to_point import GoToPointConstants
 
 from wpimath.geometry import Rotation2d, Translation2d
 from wpilib import Timer, SmartDashboard, SendableChooser

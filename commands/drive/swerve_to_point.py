@@ -9,8 +9,8 @@ import commands2
 import math
 
 from subsystems import DriveSubsystem
-from commands import AimToDirectionConstants
-from commands import GoToPointConstants
+from commands.drive.aim_to_direction import AimToDirectionConstants
+from commands.drive.go_to_point import GoToPointConstants
 
 from wpimath.geometry import Rotation2d, Translation2d, Pose2d
 from wpilib import SmartDashboard

@@ -12,7 +12,7 @@ from subsystems import DriveSubsystem
 from wpimath.geometry import Rotation2d, Translation2d
 from wpilib import SmartDashboard
 
-from commands import AimToDirectionConstants
+from commands.drive.aim_to_direction import AimToDirectionConstants
 from constants import AutoConstants, KrakenX60
 
 class GoToPointConstants:

@@ -1,5 +1,5 @@
 import commands2
-from commands import AimToDirection
+from commands.drive.aim_to_direction import AimToDirection
 
 
 class FindObject(commands2.Command):

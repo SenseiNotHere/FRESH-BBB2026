@@ -26,14 +26,12 @@ from wpilib import (
     Timer, SendableChooser
 )
 
-from commands import AimToDirectionConstants
 from .phoenixswervemodule import PhoenixSwerveModuleSubsystem
 
 from constants import (
     DrivingConstants,
     ModuleConstants
 )
-from commands import HolonomicDrive
 from .wrapped_navx import NavxGyro
 
 U_TURN = Rotation2d.fromDegrees(180)
@@ -477,6 +475,7 @@ class DriveSubsystem(Subsystem):
         return False
 
     def calculateOverrideRotSpeed(self):
+        from commands import AimToDirectionConstants
         # 1. how many degrees we need to turn?
         if self.overrideControlsToFaceThisPoint is None:
             return 0.0

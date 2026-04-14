@@ -1,5 +1,5 @@
 from commands2 import ParallelCommandGroup
-from commands import PointTowardsLocation
+from commands.drive.point_torwards_location import PointTowardsLocation
 from superstructure import RobotState
 from superstructure import Superstructure
 from subsystems import DriveSubsystem
