@@ -36,3 +36,6 @@ Icon?
 simgui.json
 simgui-window.json
 simgui-ds.json
+
+# AI
+.claude/
