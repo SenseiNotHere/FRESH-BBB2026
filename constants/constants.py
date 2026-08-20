@@ -14,7 +14,7 @@ from utils.interpolatingMap import InterpolatingMap
 
 class KrakenX60:
     kFreeSpeedRpm = 5800
-    kMaxSpeedMetersPerSecond = 2.8
+    kMaxSpeedMetersPerSecond = 1.5
 
 class DrivingConstants:
 

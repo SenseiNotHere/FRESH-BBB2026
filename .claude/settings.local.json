@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"from pathplannerlib.util import FlippingUtil; print\\([m for m in dir\\(FlippingUtil\\) if not m.startswith\\('_'\\)]\\)\")"
+    ]
+  }
+}
